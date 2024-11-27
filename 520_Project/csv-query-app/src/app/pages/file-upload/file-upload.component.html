@@ -1,7 +1,10 @@
 <!-- Navigation Bar -->
 <div class="navbar">
   <div class="logo">
-    <img src="assets/logo.png" alt="Logo" />
+    <img src="assets/images/logo.png" alt="Logo" />
+  </div>
+  <div class="website-title">
+    <h1>QueryGenAI</h1>
   </div>
   <div class="profile">
     <button class="profile-button" (click)="toggleDropdown()">
@@ -19,15 +22,16 @@
 <!-- Main Content -->
 <div class="container">
   <div class="left-section">
-    <h2>Upload CSV</h2>
     <input type="file" (change)="onFileChange($event)" />
     <div class="file-info" *ngIf="fileData">
       <h3>Selected File</h3>
       <p>{{ fileData.name }}</p>
     </div>
 
-    <!-- Added CSV Preview -->
-    <h3>CSV Preview</h3>
+    <h2>CSV Preview</h2>
+    <p *ngIf="csvData.length === 0" class="no-data-message">
+      No data to display. Upload a file to preview.
+    </p>
     <div class="table-container" *ngIf="csvData.length > 0">
       <table>
         <thead>
@@ -42,22 +46,9 @@
         </tbody>
       </table>
     </div>
-    <p *ngIf="csvData.length === 0">No data to display. Upload a file to preview.</p>
-  </div>
-
-  <div class="right-section">
-    <h3>Query Options</h3>
-    <div class="query-options">
-      <label>
-        <input type="radio" name="queryType" value="SQL" [(ngModel)]="queryType" />
-        SQL
-      </label>
-      <label>
-        <input type="radio" name="queryType" value="Pandas" [(ngModel)]="queryType" />
-        Pandas
-      </label>
-    </div>
     
+
+    <!-- Chat Section at the Bottom -->
     <div class="chat-section">
       <div class="chat-input">
         <label for="textToSend">Text to send</label>
@@ -65,15 +56,30 @@
         <button class="submit-button" (click)="onSubmitQuery()">Submit</button>
       </div>
     </div>
-    <div class="result-section">
-      <!-- Query Result Display -->
-    <div class="query-result">
-      <label>Query returned:</label>
-      <p>{{ queryResult }}</p>
+  </div>
+
+  <div class="right-section">
+    <div class="query-options-container">
+      <h3>Query Options</h3>
+      <div class="query-options">
+        <label>
+          <input type="radio" name="queryType" value="SQL" [(ngModel)]="queryType" />
+          SQL
+        </label>
+        <label>
+          <input type="radio" name="queryType" value="Pandas" [(ngModel)]="queryType" />
+          Pandas
+        </label>
+      </div>
     </div>
+
+    <div class="result-section">
+      <div class="query-result">
+        <label>Query returned:</label>
+        <p>{{ queryResult }}</p>
+      </div>
       <h4>Query Results</h4>
-      <div *ngIf="queryResult">{{ queryResult }}</div>
-      <div class="table-container" *ngIf="isResultTable">
+      <div class="result-table-container" *ngIf="isResultTable">
         <table *ngIf="data.length" border="1">
           <thead>
             <tr>
@@ -87,6 +93,6 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </div>    
   </div>
 </div>

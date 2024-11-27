@@ -9,39 +9,68 @@ import { Router } from '@angular/router';
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
-  providers:[BackendService],
+  providers: [BackendService],
   standalone: true,
-  imports: [ReactiveFormsModule, HttpClientModule]
+  imports: [ReactiveFormsModule, HttpClientModule],
 })
 export class AuthComponent {
   authForm: FormGroup;
+  isFlipped: boolean = false; // Track flipping state
 
-  constructor(private formBuilder: FormBuilder, public service: BackendService, private http: HttpClient, private route: Router) {
+  // Eye toggle state
+  showLoginPassword: boolean = false;
+  showRegisterPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    public service: BackendService,
+    private http: HttpClient,
+    private route: Router
+  ) {
     this.authForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
   }
 
   onSubmit() {
     if (this.authForm.valid) {
-      this.hashAndSendPassword();
+      this.hashAndSendPasswordForLogin();
     }
   }
 
-  async hashAndSendPassword() {
+  async hashAndSendPasswordForLogin() {
     const { email, password } = this.authForm.value;
 
     // Hash the password using CryptoJS
     const hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
-    console.log(email, hashedPassword);
-    // Send the email and hashed password to the backend
+    console.log('Login:', email, hashedPassword);
+
+    // Send the email and hashed password to the backend for login
     try {
       const response = await this.service.login(email, hashedPassword).toPromise();
-      this.route.navigate(["file-upload"]);
+      this.route.navigate(['file-upload']);
     } catch (error) {
       console.error('Error logging in', error);
     }
   }
-}
 
+  // Toggle flipping state for Sign Up and Log In
+  toggleFlip() {
+    this.isFlipped = !this.isFlipped;
+  }
+
+  // Methods for toggling password visibility
+  toggleLoginPassword() {
+    this.showLoginPassword = !this.showLoginPassword;
+  }
+
+  toggleRegisterPassword() {
+    this.showRegisterPassword = !this.showRegisterPassword;
+  }
+
+  toggleConfirmPassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+}
