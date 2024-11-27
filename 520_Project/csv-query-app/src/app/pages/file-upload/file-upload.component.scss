@@ -1,18 +1,36 @@
-/* Navigation Bar */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #0492C2 0%, #036A8E 100%); /* Updated gradient with requested color */
+  color: #fff; /* Ensure text color is white for better contrast */
+  height: 50px; /* Set consistent height for the navbar */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+  border-bottom: none; /* Remove border since gradient adds visual separation */
 }
 
+.website-title h1 {
+  font-size: 2.5  rem; /* Adjust the font size for visibility */
+  font-weight: bold; /* Make the text bold */
+  color: #ffffff; /* White color for contrast */
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7); /* Add a subtle shadow for better visibility */
+  margin: 0; /* Remove any default margin */
+  line-height: 1.2; /* Adjust the line height for better spacing */
+  text-align: center; /* Center the text within the parent */
+}
+/* Logo Styling */
 .navbar .logo img {
-  height: 40px;
+  height: 55px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  display: block;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Profile Section */
 .navbar .profile {
   position: relative;
 }
@@ -26,9 +44,11 @@
 
 .navbar .profile-button img {
   height: 40px;
+  width: 40px;
   border-radius: 50%;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 
 .navbar .dropdown {
   position: absolute;
@@ -64,26 +84,95 @@
 /* Main Content */
 .container {
   display: flex;
-  height: calc(100vh - 60px); /* Adjust height to account for the navbar */
+  height: calc(100vh - 50px); /* Full height minus navbar */
+  width: 100%; /* Full width of the viewport */
+}
+
+.left-section,
+.right-section {
+  flex: 1; /* Both sections take up equal space (50% each) */
+  width: 50%; /* Explicitly set each section to half the width */
+  padding: 20px;
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
 }
 
 .left-section {
-  flex: 1; /* Left section takes more space */
-  padding: 20px;
-  overflow-y: auto;
-  border-right: 1px solid #ccc;
-  background-color: #f9f9f9;
   display: flex;
-  flex-direction: column; /* Stack child elements vertically */
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: space-between; /* Push chat-section to the bottom */
+  border-right: 1px solid #ccc; /* Add a border between the sections */
+  background-color: #f9f9f9; /* Light gray background for the left section */
 }
 
 .right-section {
-  flex: 1; /* Right section takes less space */
-  padding: 20px;
+  background-color: #fff; /* White background for the right section */
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  background-color: #fff;
+  gap: 15px; /* Add spacing between elements */
+}
+
+/* Chat Section at Bottom of Left Section */
+.chat-section {
+  margin-top: auto; /* Push the chat-section to the bottom */
+  padding-top: 20px; /* Add some spacing above the chat-section */
+}
+
+.chat-input {
+  display: flex;
+  flex-direction: column; /* Stack label, textarea, and button */
+  gap: 10px; /* Add spacing between elements */
+}
+
+textarea {
+  width: 95%; /* Reduce width to 90% */
+  height: 60px; /* Reduce height to 60px */
+  resize: none; /* Prevent resizing */
+  padding: 6px; /* Decrease padding for a smaller look */
+  border: 1px solid #ccc; /* Keep the border for consistency */
+  border-radius: 5px; /* Keep rounded corners */
+  font-size: 0.9em; /* Slightly reduce font size */
+}
+
+.no-data-message {
+  margin-top: 5px; /* Add a small space below the heading */
+  font-size: 1rem; /* Adjust font size for better readability */
+  color: #555; /* Set a neutral color */
+}
+
+.submit-button {
+  width: 15%; /* Reduce width to 90% */
+  padding: 10px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  font-size: 1em;
+}
+
+/* Updated Query Options */
+.query-options-container {
+  display: flex; /* Align heading and radio buttons in a row */
+  align-items: center; /* Vertically align the heading and radio buttons */
+  gap: 20px; /* Add spacing between the heading and the radio buttons */
+}
+
+.query-options {
+  display: flex; /* Keep radio buttons inline */
+  gap: 15px; /* Add spacing between the radio buttons */
+  margin-top: -0.5rem; /* Adjust vertical alignment relative to the heading */
+}
+
+.query-options label {
+  font-size: 16px;
+  display: flex;
+  align-items: center; /* Vertically align radio buttons with their labels */
+  gap: 5px; /* Add space between the radio button and its label */
+}
+
+.query-options input[type="radio"] {
+  transform: scale(1.2); /* Increase size of the radio buttons */
 }
 
 /* Table container for CSV preview */
@@ -93,22 +182,6 @@
   border: 1px solid #ccc;
   margin-top: 15px;
   max-height: none; /* Remove height restriction */
-}
-.query-options {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.query-options label {
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.query-options input[type="radio"] {
-  transform: scale(1.2);
 }
 
 /* Table styling */
@@ -153,30 +226,27 @@ p {
   font-size: 1em;
   color: #555;
 }
-textarea {
-  width: 100%;
-  height: 80px;
-  resize: none;
-  padding: 8px;
+
+.query-result {
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1em;
 }
 
-.submit-button {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  font-size: 1em;
+.result-table-container {
+  max-height: 575px; /* Control the height to prevent layout disruption */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: Add a border for visibility */
+  margin-top: 10px; /* Space between query and table */
+  padding: 10px; /* Optional: Add padding for better aesthetics */
+  box-sizing: border-box; /* Ensure padding and border don’t affect dimensions */
+  width: 100%; /* Ensure it does not exceed its parent container */
 }
 
-.query-result{
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
+h2 {
+  font-size: 1.2rem; /* Reduce the size (default is larger) */
+  font-weight: bold; /* Keep it bold (optional) */
+  margin-bottom: 15px; /* Maintain some spacing below the heading */
+  color: #333; /* Optional: Adjust color for better readability */
 }
