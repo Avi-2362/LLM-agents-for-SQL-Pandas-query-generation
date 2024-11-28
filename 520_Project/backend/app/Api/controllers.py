@@ -28,8 +28,10 @@ class UserResource(FlaskView):
 
     @route('all/files', methods=['GET','POST'])
     def get_user_files(self):
-        user = User.get(request.args.get('user_id')) # TODO: need to get from jwt_identity
-        return jsonify(UserFiles.get(user.user_id))
+        print(request)
+        user = User.get(request.json.get('user_id')) # TODO: need to get from jwt_identity
+        print(user['user_id'])
+        return jsonify(UserFiles.get(user['user_id']))
     
     @route('upload/file', methods=['POST'])
     def upload_file(self):

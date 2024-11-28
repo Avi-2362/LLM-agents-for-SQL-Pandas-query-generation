@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 const Base_URL = "http://localhost:8000";
 
@@ -10,7 +10,7 @@ const Base_URL = "http://localhost:8000";
 
 export class BackendService {
   constructor(private http: HttpClient) {}
-  
+
   // Method to login
   login(user_id: string, password: string) {
     
@@ -18,17 +18,14 @@ export class BackendService {
       "user_id": user_id,
       "password": password
     };
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
-    });
-    return this.http.post(Base_URL+`/login`,data, {headers: headers,  withCredentials: true });
+    return this.http.post(Base_URL+`/login`,data, { withCredentials: true });
   }
 
   isLoggedIn(){
     return this.http.get(Base_URL+`/auth_check`, { withCredentials: true });
   }
-
   // Method to logout
+
   logout() {
     return this.http.post(Base_URL+`/login`,{}, { withCredentials: true });
   }
@@ -57,6 +54,14 @@ export class BackendService {
         "query": query
       };
       return this.http.post(Base_URL+`/get-pandas-query`,data, { withCredentials: true });
+    }
+
+    getUserFiles(user_id: string)
+    {
+      const data = {
+        "user_id": user_id
+      };
+      return this.http.post(Base_URL+`/api/user/all/files`,data, { withCredentials: true });
     }
 
 }
