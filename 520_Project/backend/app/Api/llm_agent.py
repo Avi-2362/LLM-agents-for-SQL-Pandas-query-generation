@@ -94,12 +94,12 @@ def query_sql_agent(df, query):
 
 # Example Usage
 
-df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-# query = "filter rows where age > 21"
-query = "how many people with age > 21?"
-pandas_res = query_pandas_agent(df, query)
-print(pandas_res['output'])
-pandas_data = process_pandas_result_to_json(pandas_res)
+# df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
+# # query = "filter rows where age > 21"
+# query = "how many people with age > 21?"
+# pandas_res = query_pandas_agent(df, query)
+# print(pandas_res['output'])
+# pandas_data = process_pandas_result_to_json(pandas_res)
 
-sql_data = query_sql_agent(df, query)
-print(sql_data['query'])
+# sql_data = query_sql_agent(df, query)
+# print(sql_data['query'])
