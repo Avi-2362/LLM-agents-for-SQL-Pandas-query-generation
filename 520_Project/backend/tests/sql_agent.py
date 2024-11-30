@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../app/
 from llm_agent import *
 import pandas as pd
 
-# creates a sqlite database from a simple pandas dataframe and checks if the data is correct
+# creates an sqlite database from a simple pandas dataframe and checks if the data is correct
 def test_csv_to_sqlite():
     df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
     db_file = "temp_table.db"
@@ -18,14 +18,26 @@ def test_csv_to_sqlite():
     conn.close()
     os.remove(db_file)
 
-# this should run without any exceptions
-def test_query_sql_agent():
+# tabular query: agent should return filtered rows where age is 21. verify the passenger ids using ground truth data
+def test_query_sql_agent1():
     df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-    query = "filter rows where age > 21"
+    query = "filter rows where age is 21"
     try:
         sql_data = query_sql_agent(df, query)
+        passengers = [passenger['PassengerId'] for passenger in sql_data['result']]
+        gt = open('passengers.txt', 'r+')
+        gt = gt.read().split(',')
+        gt = [int(i) for i in gt]
+        assert set(passengers) == set(gt)
     except Exception as e:
         assert False, f"Error: {e}"
+
+# numerical query: agent should return correct number for the query "how many people with age = 21?"
+def test_query_sql_agent2():
+    df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
+    query = "how many people with age = 21?"
+    sql_data = query_sql_agent(df, query)
+    assert int(sql_data['result']) == 24
 
 # this should return an exception because the dataframe is not a pandas dataframe
 def test_query_sql_agent_fail1():
