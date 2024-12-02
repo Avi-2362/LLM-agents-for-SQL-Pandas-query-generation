@@ -108,7 +108,7 @@ class AuthResource(FlaskView):
     def health_check(self):
         return jsonify({'hello': "hello"})
     
-    @route('new-user', methods=['POST'])
+    @route('new_user', methods=['POST'])
     def add_new_user(self):
         '''
         Register a new user
@@ -116,11 +116,15 @@ class AuthResource(FlaskView):
         username = request.json.get('username')
         name = request.json.get('name')
         email = request.json.get('email')
+        hashed_password = request.json.get('hashed_password')
         data = {
             "username": username,
             "name": name,
-            "email": email
+            "email": email,
+            "hashed_password": hashed_password
         }
+        print(request.json)
+        print(data)
         try:
             # data = request.json # data.keys = ('username', 'name', 'email')
             # check if the user already exists
@@ -147,7 +151,7 @@ class AuthResource(FlaskView):
             print(f"error-1 : {e}")
             return jsonify({
                 "msg": str(e)
-            }),200
+            }),404
         except UserAlreadyExistsException as e:
             print(f"error-2: {e}")
             return jsonify({
@@ -163,12 +167,11 @@ class AuthResource(FlaskView):
     @route('login', methods=['POST'])
     def login(self):
         user_id = request.json.get('user_id')
-        # password = request.json.get('password')
+        password = request.json.get('hashed_password')
         try: 
             resp = User.get(user_id)
-            # print(resp)
-            # if resp['password']==password:
-            if resp is not None:
+            print(resp)
+            if resp is not None and resp['hashed_password']==password:
                 access_token = create_access_token(identity=user_id)
                 print(access_token)
                 response = jsonify({"msg": "Login successful"})

@@ -12,13 +12,24 @@ export class BackendService {
   constructor(private http: HttpClient) {}
 
   // Method to login
-  login(user_id: string, password: string) {
+  login(user_id: string, hashed_password: string) {
     
     const data = {
       "user_id": user_id,
-      "password": password
+      "hashed_password": hashed_password
     };
     return this.http.post(Base_URL+`/login`,data, { withCredentials: true });
+  }
+
+  // Method to register
+  register(email: string, hashed_password: string) {
+    const data = {
+      "name": email,
+      "email": email,
+      "username": email,
+      "hashed_password": hashed_password
+    }
+    return this.http.post(Base_URL+`/new_user`,data, { withCredentials: true });
   }
 
   isLoggedIn(){

@@ -86,6 +86,7 @@ class User(BaseModel):
     user_id: str
     name: str
     username: str
+    hashed_password: str
     email: str = ""
 
     @staticmethod
@@ -112,13 +113,13 @@ class User(BaseModel):
     
     @classmethod
     def _required_keys(cls):
-        return ["username", "name", "email"]
+        return ["username", "name", "email", "hashed_password"]
 
     @staticmethod
     def validate_nd_make_user(data):
         if any([(key not in data) or (key is None) for key in User._required_keys()]):
             raise InvalidInputException("username, name and email should not be null or empty")
-        return User(user_id=data['username'],name=data['name'], username=data['username'], email=data['email']), Status.VALID
+        return User(user_id=data['username'],name=data['name'], username=data['username'], email=data['email'], hashed_password=data['hashed_password']), Status.VALID
 
 
 

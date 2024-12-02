@@ -75,17 +75,18 @@
         <!-- Registration Section -->
         <div class="auth-card-reg">
           <h3>Register</h3>
-          <form>
+          <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="register-email" class="form-control" placeholder="Enter your email" />
+              <input type="email" id="email" formControlName="email" class="form-control" placeholder="Enter your email" />
             </div>
             <div class="form-group">
               <label for="password">Enter Password</label>
               <div class="password-container">
                 <input
                   [type]="showRegisterPassword ? 'text' : 'password'"
-                  id="register-password"
+                  id="password"
+                  formControlName="password"
                   class="form-control"
                   placeholder="Enter your password"
                 />
@@ -99,11 +100,12 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="confirm-password">Confirm Password</label>
+              <label for="confirm_password">Confirm Password</label>
               <div class="password-container">
                 <input
                   [type]="showConfirmPassword ? 'text' : 'password'"
-                  id="confirm-password"
+                  id="confirm_password"
+                  formControlName="confirm_password"
                   class="form-control"
                   placeholder="Confirm password"
                 />

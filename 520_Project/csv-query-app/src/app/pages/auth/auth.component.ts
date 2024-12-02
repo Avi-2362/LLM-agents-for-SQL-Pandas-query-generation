@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 })
 export class AuthComponent {
   authForm: FormGroup;
+  registerForm: FormGroup;
   isFlipped: boolean = false; // Track flipping state for flip effect
 
   // Eye toggle states
@@ -33,6 +34,11 @@ export class AuthComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
+    this.registerForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+      confirm_password: ['', [Validators.required]]
+    });
   }
 
   // Handle login form submission
@@ -42,6 +48,38 @@ export class AuthComponent {
     }
   }
 
+  // Handle user registration form submission
+  onRegisterSubmit() {
+    console.log("here...!");
+    console.log(this.registerForm);
+    if (this.registerForm.valid) {
+      console.log("validated!!");
+      const {email, password, confirm_password} = this.registerForm.value;
+      if (password == confirm_password){
+        console.log("password matched!!!")
+        this.hashAndSendPasswordForRegister();
+      }
+      console.log(this.registerForm.value);
+    }
+  }
+  // Hash the password and send it for registration
+  async hashAndSendPasswordForRegister() {
+    const {email, password, confirm_password} = this.registerForm.value;
+    // Hash the password using CryptoJS
+    const hashed_password = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+    console.log('Register:', email, hashed_password);
+    // Send the email and hashed password to the backend for User Registration
+    try {
+      const response = await this.service.register(email, hashed_password).toPromise();
+      // this.route.navigate(['dashboard']); // Navigate on successful login
+      console.log(response);
+      this.registerForm.reset();
+      console.log("login now!!");
+      this.toggleFlip();
+    } catch (error) {
+      console.error('Error logging in', error);
+    }
+  }
   // Hash the password and send it for login
   async hashAndSendPasswordForLogin() {
     const { email, password } = this.authForm.value;
@@ -53,7 +91,7 @@ export class AuthComponent {
     // Send the email and hashed password to the backend for login
     try {
       const response = await this.service.login(email, hashedPassword).toPromise();
-      this.route.navigate(['file-upload']); // Navigate on successful login
+      this.route.navigate(['dashboard']); // Navigate on successful login
     } catch (error) {
       console.error('Error logging in', error);
     }
