@@ -8,7 +8,6 @@
   font-weight: bold;
   color: #333;
   z-index: 10; /* Ensure it appears above other elements */
-  padding-left:430px;
 }
 
 .website-title h1 {
@@ -19,6 +18,7 @@
   margin: 0; /* Remove any default margin */
   line-height: 1.2; /* Adjust the line height for better spacing */
   text-align: center; /* Center the text within the parent */
+  padding-left: 750px;
 }
 
 .auth-container {
@@ -121,8 +121,6 @@
 }
 
 
-
-
 .auth-card h3 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
@@ -223,7 +221,6 @@
 }
 
 
-
 .auth-illustration h2 {
   font-size: 2rem;
   font-weight: bold;
@@ -253,7 +250,6 @@
   background: #0492C2; /* Updated to requested color */
   color: #fff; /* Keep text color white for contrast */
 }
-
 
 
 /* Responsive Design */

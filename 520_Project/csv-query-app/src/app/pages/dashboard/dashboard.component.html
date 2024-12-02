@@ -1,22 +1,19 @@
+<!-- Navigation Bar -->
 <div class="navbar">
-    <div class="logo">
-      <img src="assets/images/logo.png" alt="Logo" />
-    </div>
-    <div class="website-title">
-      <h1>QueryGenAI</h1>
-    </div>
-    <div class="profile">
-      <button class="profile-button" (click)="toggleDropdown()">
-        <img src="assets/images/profile-pic.webp" />
-      </button>
-      <div class="dropdown" *ngIf="dropdownOpen">
-        <ul>
-          <li><a href="/profile">Profile</a></li>
-          <li (click)="logout()">Sign Out</li>
-        </ul>
-      </div>
-    </div>
+  <div class="logo">
+    <img src="assets/images/logo.png" alt="Logo" />
+  </div>
+  <div class="website-title">
+    <h1>QueryGenAI</h1>
+  </div>
+  <div class="profile">
+    <button class="signout-button" (click)="logout()">
+      Sign Out
+    </button>
+  </div>
 </div>
+
+
 
 
   <!-- <div class="p-6 bg-gray-100 min-h-screen">
@@ -45,7 +42,11 @@
    <div class="dashboard">
     <h1 class="title">Your Files</h1>
     <div class="file-grid">
-      <div class="file-card" *ngFor="let file of files" (click)="openFile(file.file_id)">
+      <div
+        class="file-card"
+        *ngFor="let file of files"
+        (click)="openFile(file.file_id)"
+      >
         <div class="file-icon">
           <img src="assets/images/file-icon.png" alt="File Icon" />
         </div>
@@ -55,5 +56,13 @@
         </div>
       </div>
     </div>
+    <button class="upload-button" (click)="fileInput.click()">Upload</button>
+    <input
+      #fileInput
+      type="file"
+      hidden
+      (change)="handleFileUpload($event)"
+    />
   </div>
+  
   

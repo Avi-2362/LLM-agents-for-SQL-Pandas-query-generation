@@ -15,9 +15,9 @@ import { Router } from '@angular/router';
 })
 export class AuthComponent {
   authForm: FormGroup;
-  isFlipped: boolean = false; // Track flipping state
+  isFlipped: boolean = false; // Track flipping state for flip effect
 
-  // Eye toggle state
+  // Eye toggle states
   showLoginPassword: boolean = false;
   showRegisterPassword: boolean = false;
   showConfirmPassword: boolean = false;
@@ -28,18 +28,21 @@ export class AuthComponent {
     private http: HttpClient,
     private route: Router
   ) {
+    // Initialize form group with validation
     this.authForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }
 
+  // Handle login form submission
   onSubmit() {
     if (this.authForm.valid) {
       this.hashAndSendPasswordForLogin();
     }
   }
 
+  // Hash the password and send it for login
   async hashAndSendPasswordForLogin() {
     const { email, password } = this.authForm.value;
 
@@ -50,13 +53,13 @@ export class AuthComponent {
     // Send the email and hashed password to the backend for login
     try {
       const response = await this.service.login(email, hashedPassword).toPromise();
-      this.route.navigate(['file-upload']);
+      this.route.navigate(['file-upload']); // Navigate on successful login
     } catch (error) {
       console.error('Error logging in', error);
     }
   }
 
-  // Toggle flipping state for Sign Up and Log In
+  // Toggle flipping state for flip effect
   toggleFlip() {
     this.isFlipped = !this.isFlipped;
   }

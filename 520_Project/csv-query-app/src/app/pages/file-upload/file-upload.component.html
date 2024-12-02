@@ -7,17 +7,12 @@
     <h1>QueryGenAI</h1>
   </div>
   <div class="profile">
-    <button class="profile-button" (click)="toggleDropdown()">
-      <img src="assets/images/profile-pic.webp" />
+    <button class="signout-button" (click)="logout()">
+      Sign Out
     </button>
-    <div class="dropdown" *ngIf="dropdownOpen">
-      <ul>
-        <li><a href="/profile">Profile</a></li>
-        <li (click)="logout()">Sign Out</li>
-      </ul>
-    </div>
   </div>
 </div>
+
 
 <!-- Main Content -->
 <div class="container">
