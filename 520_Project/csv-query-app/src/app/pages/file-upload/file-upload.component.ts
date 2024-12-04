@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { BackendService } from '../../services/backend.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import * as XLSX from 'xlsx'; // Import XLSX for parsing Excel/CSV files
+import { VoiceService } from '../../services/voice.service';
 
 
 
@@ -35,6 +36,7 @@ export class FileUploadComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public service: BackendService,
+    private speechRecognitionService: VoiceService,
     private http: HttpClient
   ) {
     this.fileForm = this.fb.group({
@@ -187,5 +189,17 @@ export class FileUploadComponent implements OnInit {
   }
 
   queryType: string = 'SQL'; // Default to 'Pandas'
+
+  startVoiceInput(): void {
+    if (!this.speechRecognitionService.isListening) {
+      this.speechRecognitionService.startListening((text: string) => {
+        this.query += ` ${text}`;
+      });
+    }
+  }
+
+  stopVoiceInput(): void {
+    this.speechRecognitionService.stopListening();
+  }
 
 }
