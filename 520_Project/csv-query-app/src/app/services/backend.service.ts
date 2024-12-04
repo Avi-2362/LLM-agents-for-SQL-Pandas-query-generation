@@ -11,6 +11,7 @@ const Base_URL = "http://localhost:8000";
 
 export class BackendService {
   private dataSubject = new BehaviorSubject<string>('Initial Value');
+  private dataPythonSubject = new BehaviorSubject<string>('Initial Value');
   constructor(private http: HttpClient) {}
 
   // Method to login
@@ -94,6 +95,14 @@ export class BackendService {
   // Update data
   updateData(newData: string): void {
     this.dataSubject.next(newData);
+  }
+
+  // Observable to display python code update
+  dataPython$: Observable<string> = this.dataPythonSubject.asObservable();
+
+  // Update data
+  updateDataPython(newData: string): void {
+    this.dataPythonSubject.next(newData);
   }
 
 }

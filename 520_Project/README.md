@@ -55,6 +55,8 @@ This is a web-based tool to translate natural language inputs into SQL/Pandas qu
    npm install -g @angular/cli  
    cd csv-query-app  
    npm install crypto-js  
+   npm install prismjs
+   npm install --save-dev @types/prismjs
    ```
 
 ### Backend Setup  

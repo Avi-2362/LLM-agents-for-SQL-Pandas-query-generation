@@ -63,21 +63,28 @@
       <h3>Query Options</h3>
       <div class="query-options">
         <label>
-          <input type="radio" name="queryType" value="SQL" [(ngModel)]="queryType" />
+          <input type="radio" name="queryType" value="SQL" [(ngModel)]="queryType" (ngModelChange)="onQueryTypeChange($event)" />
           SQL
         </label>
         <label>
-          <input type="radio" name="queryType" value="Pandas" [(ngModel)]="queryType" />
+          <input type="radio" name="queryType" value="Pandas" [(ngModel)]="queryType" (ngModelChange)="onQueryTypeChange($event)" />
           Pandas
         </label>
       </div>
     </div>
 
     <div class="result-section">
-      <div class="query-result">
-        <label>Query returned:</label>
+      <!-- <div *ngIf="queryType=='SQL'" class="query-result">
+        <label >Query:</label>
         <p>{{ queryResult }}</p>
+      </div> -->
+      <div class="code-container">
+        <pre *ngIf="queryType=='Pandas'" ><code [innerHTML]="highlightedCode" class="language-python"></code></pre>
+        <pre *ngIf="queryType=='SQL'" ><code [innerHTML]="highlightedCode" class="language-sql"></code></pre>
+        
+        <button (click)="copyCode()" class="copy-button"><i class="fa fa-copy"></i></button>
       </div>
+       
       <h4>Query Results</h4>
       <div class="result-table-container" *ngIf="isResultTable">
         <table *ngIf="data.length" border="1">

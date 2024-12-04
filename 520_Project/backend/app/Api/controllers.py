@@ -7,7 +7,6 @@ from flask_classful import FlaskView, route
 # from flask import make_response, request, current_app
 # from datetime import timedelta, datetime
 # from functools import update_wrapper
-from models import *
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -17,7 +16,7 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
-from llm_agent import process_pandas_result_to_json, query_pandas_agent, query_sql_agent
+from app.Api.llm_agent import process_pandas_result_to_json, query_pandas_agent, query_sql_agent
 from app.Api.models import *
 from app.Api.exceptions import *
 from app.Api.enums import *

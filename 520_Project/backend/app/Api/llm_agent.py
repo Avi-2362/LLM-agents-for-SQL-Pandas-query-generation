@@ -18,6 +18,12 @@ load_dotenv()
 PANDAS_AGENT_PROMPT = "Give me the pandas code to get answer to the query: {query}"
 SQL_AGENT_PROMPT = "Give me the SQL code to get answer to the following query. Do not select specific columns unless I ask you to do so. If I do not specify the number of rows, then assume that I want all such rows i.e. DO NOT USE LIMIT UNLESS I SPECIFY A NUMBER: {query}"
 
+FULL_PYTHON_STARTER_CODE = """
+import pandas as pd
+
+df = pd.read_csv("filename.csv")
+"""
+
 def query_pandas_agent(df, query):
     if not isinstance(df, pd.core.frame.DataFrame):
         raise Exception("Invalid input. Please provide a pandas DataFrame")
@@ -29,13 +35,15 @@ def query_pandas_agent(df, query):
     prompt = PANDAS_AGENT_PROMPT.format(query=query)
     print(prompt)
     res = agent.invoke(prompt)
+    print(res)
     return res
 
 def process_pandas_result_to_json(res):
+    code = FULL_PYTHON_STARTER_CODE + '\n'+f"print({res['intermediate_steps'][0][0].dict()['tool_input']})"
     data = {
-        "query": res["output"],
+        "query": code
     }
-    
+    print(res)
     if(isinstance(res['intermediate_steps'][0][-1],pd.core.frame.DataFrame)):
         data["is_table"] = True
         data["result"] = res['intermediate_steps'][0][-1].to_json()

@@ -44,6 +44,8 @@ export class DashboardComponent implements OnInit {
       (error) => {
         console.error('Access denied:', error);
         this.is_logged_in = false;
+        // redirect to auth page
+        this.router.navigate(['/auth']);
       }
     );
   }

@@ -7,6 +7,9 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import * as XLSX from 'xlsx'; // Import XLSX for parsing Excel/CSV files
 import { Router, ActivatedRoute } from '@angular/router';
 import { VoiceService } from '../../services/voice.service';
+import * as Prism from 'prismjs';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-sql';   // Import SQL grammar
 
 
 
@@ -35,6 +38,16 @@ export class FileUploadComponent implements OnInit {
   // Add chatMessages property
   chatMessages: ChatMessage[] = [];
 
+  // python code
+  pythonCode: string  = `
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("World")
+  `;
+  sqlQuery: string = `SELECT * FROM TABLE;`
+  highlightedCode: string = '';
+
   constructor(
     private fb: FormBuilder,
     public service: BackendService,
@@ -56,12 +69,25 @@ export class FileUploadComponent implements OnInit {
         console.log(this.user_id, this.is_logged_in);
         this.file_id = this.route.snapshot.paramMap.get('id');
         this.parseFileFromUrl();
+
+        this.service.dataPython$.subscribe((updatedData) => {
+          console.log(updatedData);
+          if (this.queryType=="Pandas"){
+            this.highlightedCode = Prism.highlight(this.pythonCode, Prism.languages['python'], 'python');
+          }
+          else {
+            this.highlightedCode = Prism.highlight(this.sqlQuery, Prism.languages['sql'], 'sql');
+          }
+          
+        })
       },
       (error) => {
         console.error('Access denied', error, this.is_logged_in);
+        // redirect to auth page
+        this.router.navigate(['/auth']);
       }
     );
-    
+
   }
 
   async onChatSubmit() {
@@ -140,7 +166,9 @@ export class FileUploadComponent implements OnInit {
           this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
             next: (response: any) => {
               const result = JSON.parse(response['result']);
-
+              this.queryResult = response['query'];
+              this.pythonCode = this.queryResult;
+              this.service.updateDataPython("python");
               this.headers = Object.keys(result);
               this.isResultTable = response['is_table'];
 
@@ -164,7 +192,7 @@ export class FileUploadComponent implements OnInit {
         console.error('Unexpected error in query submission', error);
       }
 
-      this.queryResult = `Results for query: ${this.query}`;
+      // this.queryResult = `Results for query: ${this.query}`;
     }
   }
 
@@ -203,6 +231,20 @@ export class FileUploadComponent implements OnInit {
 
   stopVoiceInput(): void {
     this.speechRecognitionService.stopListening();
+  }
+
+  copyCode(): void {
+    navigator.clipboard.writeText(this.pythonCode).then(() => {
+      alert('Code copied to clipboard!');
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+    });
+  }
+
+  onQueryTypeChange(selectedType: string): void {
+    console.log('Query Type changed to:', selectedType);
+    this.service.updateDataPython(selectedType);
+    // Add additional logic here as needed
   }
 
 }
