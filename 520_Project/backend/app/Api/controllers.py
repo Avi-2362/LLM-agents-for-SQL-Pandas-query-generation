@@ -58,7 +58,8 @@ class UserResource(FlaskView):
         })
     
     @route('generate-upload-url', methods=['GET'])
-    def generate_upload_url():
+    def generate_upload_url(self):
+        print(request.args)
         try:
             filename = request.args.get('filename')
             params = {
@@ -77,7 +78,7 @@ class UserResource(FlaskView):
 
     # @route('view/file-url', methods=['GET'])
     @route('generate-view-url', methods=['GET'])
-    def generate_view_url():
+    def generate_view_url(self):
         try:
             filename = request.json.get('filename')
             params = {

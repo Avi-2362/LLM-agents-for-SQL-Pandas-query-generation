@@ -38,12 +38,12 @@ export class BackendService {
   // Method to logout
 
   logout() {
-    return this.http.post(Base_URL+`/login`,{}, { withCredentials: true });
+    return this.http.post(Base_URL+`/logout`,{}, { withCredentials: true });
   }
 
   // Method to request a pre-signed URL for uploading
   getPresignedUploadUrl(filename: string) {
-    return this.http.get<{ url: string }>(Base_URL + `/generate-upload-url?filename=${filename}`);
+    return this.http.get<{ url: string }>(Base_URL +`/api/user/generate-upload-url?filename=${filename}`);
   }
 
   // Method to request a pre-signed URL for downloading

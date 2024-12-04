@@ -1,7 +1,14 @@
+.page-whole {
+  width: 100%;
+  height: 100%;
+  background: url("/assets/images/logo.png") no-repeat center center;
+  background-size: cover; /* Ensure the image covers the entire container */
+}
+
 /* Website Title */
 .website-title {
   position: absolute;
-  top: 170px; /* Adjust spacing from the top of the container */
+  top: 100px; /* Adjust spacing from the top of the container */
   width: 100%; /* Center align */
   text-align: center;
   font-size: 2rem;
@@ -18,19 +25,32 @@
   margin: 0; /* Remove any default margin */
   line-height: 1.2; /* Adjust the line height for better spacing */
   text-align: center; /* Center the text within the parent */
-  padding-left: 750px;
 }
 
+// .auth-container {
+//   display: flex;
+//   justify-content: center; /* Center the entire layout */
+//   align-items: center; /* Vertically center the layout */
+//   height: 100vh;
+//   width: 100vw;
+//   position: relative; /* Ensure it layers properly */
+//   border: none;
+// }
 .auth-container {
   display: flex;
-  justify-content: center; /* Center the entire layout */
-  align-items: center; /* Vertically center the layout */
-  height: 100vh;
-  width: 100vw;
-  background: url("/assets/images/logo.png") no-repeat center center;
-  background-size: cover; /* Ensure the image covers the entire container */
-  position: relative; /* Ensure it layers properly */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  position: relative; /* Absolute positioning for centering */
+  top: 20%; /* Move to the middle of the page */
+  // left: 50%; /* Move to the center of the page */
+  // transform: translate(-50%, -50%); /* Adjust position to ensure centering */
+  width: 100%; /* Occupy full width of the viewport */
+  height: 100%; /* Occupy full height of the viewport */
+  z-index: 1; /* Ensure it appears above background elements */
+  // background: transparent; /* Optional: Add background color if needed */
+  border: none;
 }
+
 
 
 /* Inner container */
@@ -41,10 +61,12 @@
   border-radius: 10px;
   overflow: hidden; /* Remove overflow to ensure both sections align perfectly */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 900px; /* Limit total width */
+  // max-width: 900px; /* Limit total width */
   width: 100%; /* Full width */
-  height: 500px; /* Set a fixed height for both sections */
+  height: 100%;
+  // height: 500px; /* Set a fixed height for both sections */
   margin-top: 0rem; /* Add space above the card */
+  border: none;
 }
 
 /* Reverse Layout for Registration Page */

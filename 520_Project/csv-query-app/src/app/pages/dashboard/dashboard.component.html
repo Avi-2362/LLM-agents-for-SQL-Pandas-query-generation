@@ -45,7 +45,8 @@
       <div
         class="file-card"
         *ngFor="let file of files"
-        (click)="openFile(file.file_id)"
+        (mouseenter)="hoveredFileId = file.file_id"
+        (mouseleave)="hoveredFileId = null"
       >
         <div class="file-icon">
           <img src="assets/images/file-icon.png" alt="File Icon" />
@@ -53,6 +54,13 @@
         <div class="file-info">
           <h3>{{ file.name }}</h3>
           <p>{{ file.uploadDate | date: 'medium' }}</p>
+        </div>
+        <div
+          class="delete-icon"
+          *ngIf="hoveredFileId === file.file_id"
+          (click)="deleteFile(file.file_id, $event)"
+        >
+          ✖
         </div>
       </div>
     </div>
@@ -64,5 +72,4 @@
       (change)="handleFileUpload($event)"
     />
   </div>
-  
   

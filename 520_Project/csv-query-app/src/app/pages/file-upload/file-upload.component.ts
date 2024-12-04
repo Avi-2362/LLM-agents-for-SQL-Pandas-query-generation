@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { BackendService } from '../../services/backend.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import * as XLSX from 'xlsx'; // Import XLSX for parsing Excel/CSV files
+import { Router } from '@angular/router';
 
 
 
@@ -35,7 +36,8 @@ export class FileUploadComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public service: BackendService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
     this.fileForm = this.fb.group({
       file: [null],
@@ -181,9 +183,23 @@ export class FileUploadComponent implements OnInit {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
-  logout() {
-    console.log('Logging out...');
-    // Add your logout logic here 
+  logout(): void {
+    
+    this.service.logout().subscribe(
+      (response: any) => {
+        if (response && response.msg == "Logout successful") {
+          
+          console.log('Logged out...');
+          this.is_logged_in = false;
+          this.router.navigate(['/auth']);
+        } else {
+          console.warn('Error logging out');
+        }
+      },
+      (error) => {
+        console.error('Failed to logout:', error);
+      }
+    );
   }
 
   queryType: string = 'SQL'; // Default to 'Pandas'

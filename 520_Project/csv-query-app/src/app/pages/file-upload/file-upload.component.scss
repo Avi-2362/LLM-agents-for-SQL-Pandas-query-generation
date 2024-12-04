@@ -10,13 +10,17 @@
 }
 
 .website-title h1 {
-  font-size: 2.5  rem; /* Adjust the font size for visibility */
+  font-size: 3rem; /* Corrected spacing in 'rem' */
   font-weight: bold; /* Make the text bold */
-  color: #180505; /* White color for contrast */
-  margin: 0; /* Remove any default margin */
-  line-height: 1.2; /* Adjust the line height for better spacing */
+  color: #333333; /* Dark gray for good contrast on white */
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1); /* Softer shadow for a cleaner look */
+  line-height: 1.4; /* Adjust the line height for better readability */
   text-align: center; /* Center the text within the parent */
+  margin: 0; /* Remove any default margin */
+  padding: 10px 20px; /* Optional padding for better spacing */
+  font-family: 'Arial', sans-serif; /* Set a clean and modern font */
 }
+
 /* Logo Styling */
 .navbar .logo img {
   height: 55px;

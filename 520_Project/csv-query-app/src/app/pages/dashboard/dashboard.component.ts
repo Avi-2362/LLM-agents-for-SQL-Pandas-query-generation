@@ -16,11 +16,9 @@ export class DashboardComponent implements OnInit {
   user_id = '';
   is_logged_in = false;
   dropdownOpen = false;
+  hoveredFileId: number | null = null;
   files: any[] = [
-    { file_id: 'probs1', name: 'File 1' },
-    { file_id: 'probs2', name: 'File 2' },
-    { file_id: 'probs3', name: 'File 3' },
-    { file_id: 'probs4', name: 'File 4' }
+    { file_id: 'probs1', name: 'File 1' }
   ]; // Placeholder data for file list
 
   constructor(
@@ -68,31 +66,75 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/file', fileId]);
   }
 
+  deleteFile(fileId: number, event: Event) {
+    event.stopPropagation(); // Prevent click event on the file card
+    this.files = this.files.filter((file) => file.file_id !== fileId);
+    console.log(`File with ID ${fileId} deleted.`);
+  }
+
   toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;
     console.log('Dropdown state:', this.dropdownOpen);
   }
 
   logout(): void {
-    console.log('Logging out...');
-    // Add your logout logic here (e.g., clearing session or token, redirecting to login page)
-    this.is_logged_in = false;
-    this.router.navigate(['/login']);
+    
+    this.service.logout().subscribe(
+      (response: any) => {
+        if (response && response.msg == "Logout successful") {
+          
+          console.log('Logged out...');
+          this.is_logged_in = false;
+          this.router.navigate(['/auth']);
+        } else {
+          console.warn('Error logging out');
+        }
+      },
+      (error) => {
+        console.error('Failed to logout:', error);
+      }
+    );
+    
+    
   }
 
-  handleFileUpload(event: Event): void {
+  async uploadFile(file:any) {
+    if (!file) return;
+
+    try {
+      const response = await this.service.getPresignedUploadUrl(file.name).toPromise();
+      const presignedUrl = response?.url;
+
+      console.log(presignedUrl);
+      if (presignedUrl) {
+        await this.service.uploadFileToS3(file, presignedUrl).toPromise();
+        console.log('File uploaded successfully');
+      }
+    } catch (error) {
+      console.error('Error uploading file', error);
+    }
+  }
+
+  async handleFileUpload(event: Event) {
     const input = event.target as HTMLInputElement;
   
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       console.log('File uploaded:', file.name);
-      // Handle the file upload logic here
-      // For example, you could push the file data to the files array or send it to the backend
+      try{
+        await this.uploadFile(file);
+
+      }
+      catch (error)
+      {
+        console.error('Error uploading file', error);
+      }
       this.files.push({
         file_id: `${this.files.length + 1}`, // Generate a unique ID
         name: file.name,
         uploadDate: new Date() // Example upload date
       });
+      // Make sure that you save file meta data in backend if uploaded sucessufylly 
     }
   }
   
