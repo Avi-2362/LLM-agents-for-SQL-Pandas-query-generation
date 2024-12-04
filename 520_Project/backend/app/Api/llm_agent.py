@@ -92,6 +92,9 @@ def query_sql_agent(df, query):
     else:
         json_output['is_table'] = True
         table_json = [dict(zip(columns, row)) for row in rows]
+        table_df = pd.DataFrame(table_json)
+        # print(table_df.head())
+        table_json = table_df.to_json()
 
     json_output['query'] = sql_res
     json_output['result'] = table_json

@@ -163,28 +163,56 @@ greet("World")
       console.log('Query submitted:', this.query);
       try {
         if (true) {
-          this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
-            next: (response: any) => {
-              const result = JSON.parse(response['result']);
-              this.queryResult = response['query'];
-              this.pythonCode = this.queryResult;
-              this.service.updateDataPython("python");
-              this.headers = Object.keys(result);
-              this.isResultTable = response['is_table'];
-
-              const rows = Object.keys(result[this.headers[0]]);
-              this.data = rows.map((rowId) => {
-                let row: any = {};
-                this.headers.forEach((header) => {
-                  row[header] = result[header][rowId];
+          if (this.queryType=="Pandas"){
+            this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
+              next: (response: any) => {
+                console.log(response);
+                const result = JSON.parse(response['result']);
+                this.queryResult = response['query'];
+                this.pythonCode = this.queryResult;
+                this.service.updateDataPython("python");
+                this.headers = Object.keys(result);
+                this.isResultTable = response['is_table'];
+  
+                const rows = Object.keys(result[this.headers[0]]);
+                this.data = rows.map((rowId) => {
+                  let row: any = {};
+                  this.headers.forEach((header) => {
+                    row[header] = result[header][rowId];
+                  });
+                  return row;
                 });
-                return row;
-              });
-            },
-            error: (error) => {
-              console.error('Error sending the query', error);
-            },
-          });
+              },
+              error: (error) => {
+                console.error('Error sending the query', error);
+              },
+            });
+          } else {
+            this.service.getSqlQueryOutput(this.file_id, this.query, 'default').subscribe({
+              next: (response: any) => {
+                console.log(response);
+                const result = JSON.parse(response['result']);
+                this.queryResult = response['query'];
+                this.sqlQuery = this.queryResult;
+                this.service.updateDataPython("sql");
+                this.headers = Object.keys(result);
+                this.isResultTable = response['is_table'];
+  
+                const rows = Object.keys(result[this.headers[0]]);
+                this.data = rows.map((rowId) => {
+                  let row: any = {};
+                  this.headers.forEach((header) => {
+                    row[header] = result[header][rowId];
+                  });
+                  return row;
+                });
+              },
+              error: (error) => {
+                console.error('Error sending the query', error);
+              },
+            });
+          }
+          
         } else {
           console.log('No file found!!');
         }

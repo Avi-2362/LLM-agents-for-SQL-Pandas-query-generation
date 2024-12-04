@@ -73,12 +73,22 @@ export class BackendService {
 
     // Method to ask query to the pandas llm
     getPandasQueryOutput(filekey: string, query: string, userid:string="default") {
-      console.log("calling llm agent...");
+      console.log("calling pandas llm agent...");
       const data = {
         "file_key": filekey,
         "query": query
       };
       return this.http.post(Base_URL+`/get-pandas-query`,data, { withCredentials: true });
+    }
+
+    // Method to ask query to the pandas llm
+    getSqlQueryOutput(filekey: string, query: string, userid:string="default") {
+      console.log("calling sql llm agent...");
+      const data = {
+        "file_key": filekey,
+        "query": query
+      };
+      return this.http.post(Base_URL+`/get-sql-query`,data, { withCredentials: true });
     }
 
     getUserFiles(user_id: string)
