@@ -60,13 +60,34 @@ This is a web-based tool to translate natural language inputs into SQL/Pandas qu
    ```
 
 ### Backend Setup  
-Install dependencies:
+Install dependencies. Run from inside `520_Project/`:
 ```bash
-    pip install Flask boto3 Flask-CORS requests  
+    pip install -r requirements.txt
 ```
 
 ## Running
+
+### Frontend
+Open a terminal and run the following:
+```
+    cd backend
+    python run.py
+```
+
+### Backend
+Open another terminal and run the following:
 ```bash
     cd csv-query-app  
     ng serve
+```
+
+Now the website can be visited at `http://localhost:4200/`.
+
+## Unit Testing
+For unit testing, run the following:
+```
+    cd backend/tests/
+    pytest api_models.py        # tests the User and UserFile models used in the backend
+    pytest sql_agent.py         # tests API for the SQL agent
+    pytest pandas_agent.py      # tests API for the Pandas agent
 ```
