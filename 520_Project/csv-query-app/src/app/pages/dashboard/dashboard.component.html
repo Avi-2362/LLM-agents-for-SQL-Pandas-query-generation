@@ -35,8 +35,8 @@
         <h3 class="text-lg font-medium text-gray-800 mb-2">{{ file.name }}</h3>
       </div>
     </div>
-  </div>
-   -->
+  </div> -->
+  
 
 
    <div class="dashboard">
@@ -47,6 +47,8 @@
         *ngFor="let file of files"
         (mouseenter)="hoveredFileId = file.file_id"
         (mouseleave)="hoveredFileId = null"
+        (click)="openFile(file.file_id)"
+      
       >
         <div class="file-icon">
           <img src="assets/images/file-icon.png" alt="File Icon" />
