@@ -1,4 +1,6 @@
 import pandas as pd
+import uuid
+from datetime import datetime
 from flask import Blueprint, Flask, jsonify, request, redirect
 from flask_classful import FlaskView, route
 # from flask_cors import cross_origin
@@ -27,13 +29,16 @@ class UserResource(FlaskView):
     # route_base = '/'
 
     @route('all/files', methods=['GET','POST'])
+    @jwt_required()
     def get_user_files(self):
         print(request)
-        user = User.get(request.json.get('user_id')) # TODO: need to get from jwt_identity
+        user_id = get_jwt_identity()
+        user = User.get(user_id) # TODO: need to get from jwt_identity
         print(user['user_id'])
         return jsonify(UserFiles.get(user['user_id']))
     
     @route('upload/file', methods=['POST'])
+    @jwt_required()
     def upload_file(self):
         '''
         ## This function should be called after generate-upload-url from frontend
@@ -47,28 +52,44 @@ class UserResource(FlaskView):
             }
         }
         '''
-        user_id = request.json.get('user_id') # TODO: need to get from jwt_identity
+        # user_id = request.json.get('user_id') # TODO: need to get from jwt_identity
+        user_id = get_jwt_identity()
         userFiles = UserFiles.get(user_id)
-        userFiles['files'].append(request.json.get('file'))
+        print("user files")
+        print(userFiles)
+        # current file
+        filename = request.json.get('filename')
+        file_id = request.json.get('file_id')
+        date = str(datetime.utcnow())
+        print(request.json)
+        print(f"filename: {filename}")
+        userFiles['files'].append({
+            "filename": filename,
+            "file_id": file_id,
+            "date": date
+        })
         userFiles = UserFiles.from_dict(userFiles)
         print(userFiles)
         userFiles.put() # put in user-files
-        return jsonify({
-            "msg": "Successfully uploaded file!!"
-        })
+        print(userFiles.to_json())
+        return jsonify(userFiles.to_json())
     
     @route('generate-upload-url', methods=['GET'])
     def generate_upload_url(self):
-        print(request.args)
+        # print(request.args)
+        file_id = str(uuid.uuid4())
         try:
             filename = request.args.get('filename')
             params = {
                 'Bucket': S3_BUCKET_NAME,
-                'Key': filename,
+                'Key': file_id,
                 'ContentType': 'text/csv'
             }
             url = s3_client.generate_presigned_url('put_object', Params=params, ExpiresIn=600)
-            return jsonify({'url': url})
+            return jsonify({
+                'url': url,
+                'file_id': file_id
+                })
         except (NoCredentialsError, PartialCredentialsError) as e:
             print(e)
             return jsonify({'error': 'Credentials error'}), 500
@@ -80,12 +101,13 @@ class UserResource(FlaskView):
     @route('generate-view-url', methods=['GET'])
     def generate_view_url(self):
         try:
-            filename = request.json.get('filename')
+            file_id = request.args.get('file_id')
             params = {
                 'Bucket': S3_BUCKET_NAME,
-                'Key': filename
+                'Key': file_id
             }
             url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
+            print(url)
             return jsonify({'url': url})
         except (NoCredentialsError, PartialCredentialsError) as e:
             print(e)

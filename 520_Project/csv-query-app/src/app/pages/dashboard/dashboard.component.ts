@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   dropdownOpen = false;
   hoveredFileId: number | null = null;
   files: any[] = [
-    { file_id: 'probs1', name: 'File 1' }
+    { file_id: 'probs1', filename: 'File 1' }
   ]; // Placeholder data for file list
 
   constructor(
@@ -36,6 +36,10 @@ export class DashboardComponent implements OnInit {
 
         // Uncomment the following line once the backend structure is confirmed
         // this.loadUserFiles();
+        this.service.data$.subscribe((updatedData) => {
+          console.log(updatedData);
+          this.loadUserFiles();
+        });
       },
       (error) => {
         console.error('Access denied:', error);
@@ -102,13 +106,24 @@ export class DashboardComponent implements OnInit {
     if (!file) return;
 
     try {
-      const response = await this.service.getPresignedUploadUrl(file.name).toPromise();
+      const response: any = await this.service.getPresignedUploadUrl().toPromise();
       const presignedUrl = response?.url;
-
+      const file_id = response?.file_id;
       console.log(presignedUrl);
+      console.log(file_id);
       if (presignedUrl) {
         await this.service.uploadFileToS3(file, presignedUrl).toPromise();
         console.log('File uploaded successfully');
+        // after uploading to S3, call the backend api to upload new file to a user
+        const file_data = {
+          filename: file.name,
+          file_id: file_id
+        }
+        const resp:any = await this.service.addFileToUser(file_data).toPromise();
+        console.log("response", resp);
+        this.service.updateData("files"); // can be any string
+        // this.files = resp?.files;
+        // console.log(this.files);
       }
     } catch (error) {
       console.error('Error uploading file', error);
@@ -129,11 +144,6 @@ export class DashboardComponent implements OnInit {
       {
         console.error('Error uploading file', error);
       }
-      this.files.push({
-        file_id: `${this.files.length + 1}`, // Generate a unique ID
-        name: file.name,
-        uploadDate: new Date() // Example upload date
-      });
       // Make sure that you save file meta data in backend if uploaded sucessufylly 
     }
   }

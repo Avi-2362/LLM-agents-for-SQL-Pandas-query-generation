@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { BackendService } from '../../services/backend.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import * as XLSX from 'xlsx'; // Import XLSX for parsing Excel/CSV files
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { VoiceService } from '../../services/voice.service';
 
 
@@ -27,6 +27,7 @@ export class FileUploadComponent implements OnInit {
   chatQuery = '';
   user_id = '';
   is_logged_in = false;
+  file_id: any;
 
   // New properties for header dropdown functionality
   dropdownOpen = false;
@@ -38,6 +39,7 @@ export class FileUploadComponent implements OnInit {
     private fb: FormBuilder,
     public service: BackendService,
     private router: Router,
+    private route: ActivatedRoute,
     private speechRecognitionService: VoiceService,
     private http: HttpClient
   ) {
@@ -52,11 +54,14 @@ export class FileUploadComponent implements OnInit {
         this.user_id = response.user_id;
         this.is_logged_in = true;
         console.log(this.user_id, this.is_logged_in);
+        this.file_id = this.route.snapshot.paramMap.get('id');
+        this.parseFileFromUrl();
       },
       (error) => {
         console.error('Access denied', error, this.is_logged_in);
       }
     );
+    
   }
 
   async onChatSubmit() {
@@ -90,58 +95,40 @@ export class FileUploadComponent implements OnInit {
   csvData: any[] = [];
   cols: string[] = [];
 
-  onFileChange(event: any) {
-    this.file = event.target.files[0];
-    if (this.file) {
-      console.log('file added');
-      console.log(this.file);
-      // Process the file for CSV preview
-      this.parseFile(this.file);
-    }
-  }
 
-  parseFile(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const data = e.target.result;
-      const workbook = XLSX.read(data, { type: 'binary' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1 });
+  async parseFileFromUrl() {
+    const resp:any = await this.service.getPresignedDownloadUrl(this.file_id).toPromise();
+    const url = resp?.url;
+    console.log(url);
+    this.http.get(url, { responseType: 'arraybuffer' }).subscribe({
+      next: (fileData) => {
+        const workbook = XLSX.read(fileData, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1 });
 
-      if (Array.isArray(jsonData)) {
-        const maxRows = 50; // Limit rows to prevent rendering large files
-        const maxCols = 50; // Limit columns to prevent rendering large files
+        if (Array.isArray(jsonData)) {
+          const maxRows = 50; // Limit rows to prevent rendering large files
+          const maxCols = 50; // Limit columns to prevent rendering large files
 
-        this.cols = jsonData[0]?.slice(0, maxCols) || [];
-        this.csvData = jsonData.slice(1, maxRows).map((row: any[]) =>
-          this.cols.reduce((acc: any, col: string, index: number) => {
-            acc[col] = row[index] || '';
-            return acc;
-          }, {})
-        );
-      } else {
-        console.error('Invalid data format');
-      }
-    };
-    reader.readAsBinaryString(file);
-  }
+          this.cols = jsonData[0]?.slice(0, maxCols) || [];
+          this.csvData = jsonData.slice(1, maxRows).map((row: any[]) =>
+            this.cols.reduce((acc: any, col: string, index: number) => {
+              acc[col] = row[index] || '';
+              return acc;
+            }, {})
+          );
 
-  async uploadFile() {
-    if (!this.file) return;
-
-    try {
-      const response = await this.service.getPresignedUploadUrl(this.file.name).toPromise();
-      const presignedUrl = response?.url;
-
-      console.log(presignedUrl);
-      if (presignedUrl) {
-        await this.service.uploadFileToS3(this.file, presignedUrl).toPromise();
-        console.log('File uploaded successfully');
-      }
-    } catch (error) {
-      console.error('Error uploading file', error);
-    }
+          console.log('Columns:', this.cols);
+          console.log('CSV Data:', this.csvData);
+        } else {
+          console.error('Invalid data format');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching file:', err);
+      },
+    });
   }
 
   async onSubmitQuery() {
@@ -149,8 +136,8 @@ export class FileUploadComponent implements OnInit {
     if (this.query) {
       console.log('Query submitted:', this.query);
       try {
-        if (this.file) {
-          this.service.getPandasQueryOutput(this.file.name, this.query, 'default').subscribe({
+        if (true) {
+          this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
             next: (response: any) => {
               const result = JSON.parse(response['result']);
 

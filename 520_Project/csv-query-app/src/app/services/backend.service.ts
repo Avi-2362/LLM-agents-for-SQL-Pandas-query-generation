@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 const Base_URL = "http://localhost:8000";
 
@@ -9,6 +10,7 @@ const Base_URL = "http://localhost:8000";
  
 
 export class BackendService {
+  private dataSubject = new BehaviorSubject<string>('Initial Value');
   constructor(private http: HttpClient) {}
 
   // Method to login
@@ -42,19 +44,30 @@ export class BackendService {
   }
 
   // Method to request a pre-signed URL for uploading
-  getPresignedUploadUrl(filename: string) {
-    return this.http.get<{ url: string }>(Base_URL +`/api/user/generate-upload-url?filename=${filename}`);
+  getPresignedUploadUrl() {
+    // return this.http.get<{ url: string }>(Base_URL +`/api/user/generate-upload-url?filename=${filename}`);
+    return this.http.get(Base_URL +`/api/user/generate-upload-url`);
   }
 
   // Method to request a pre-signed URL for downloading
-  getPresignedDownloadUrl(filename: string) {
-    return this.http.get<{ url: string }>(Base_URL + `/generate-download-url?filename=${filename}`);
+  getPresignedDownloadUrl(file_id: string) {
+    return this.http.get(Base_URL + `/api/user/generate-view-url?file_id=${file_id}`, { withCredentials: true });
   }
 
   // Method to upload file using the upload URL
   uploadFileToS3(file: File, presignedUrl: string) {
     const headers = { 'Content-Type': 'text/csv' };
     return this.http.put(presignedUrl, file, { headers });
+  }
+
+  // Method to add files to user file list
+  addFileToUser(file_data: any) {
+    console.log("called addFileToUser")
+    const data = {
+      'filename': file_data.filename,
+      'file_id': file_data.file_id
+    };
+    return this.http.post(Base_URL +`/api/user/upload/file`, data, { withCredentials: true })
   }
 
     // Method to ask query to the pandas llm
@@ -74,5 +87,13 @@ export class BackendService {
       };
       return this.http.post(Base_URL+`/api/user/all/files`,data, { withCredentials: true });
     }
+
+  // Observable for components to subscribe to
+  data$: Observable<string> = this.dataSubject.asObservable();
+
+  // Update data
+  updateData(newData: string): void {
+    this.dataSubject.next(newData);
+  }
 
 }
