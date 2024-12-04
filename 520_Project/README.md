@@ -51,13 +51,13 @@ This is a web-based tool to translate natural language inputs into SQL/Pandas qu
 ### Frontend Setup  
 1. Install Node.js: [Download here](https://nodejs.org/).  
 2. Run the following commands:  
-   ```bash  
+```bash  
    npm install -g @angular/cli  
    cd csv-query-app  
    npm install crypto-js  
    npm install prismjs
    npm install --save-dev @types/prismjs
-   ```
+```
 
 ### Backend Setup  
 Install dependencies. Run from inside `520_Project/`:
@@ -69,23 +69,23 @@ Install dependencies. Run from inside `520_Project/`:
 
 ### Frontend
 Open a terminal and run the following:
-```
-    cd backend
-    python run.py
+```bash
+    cd csv-query-app  
+    ng serve
 ```
 
 ### Backend
 Open another terminal and run the following:
 ```bash
-    cd csv-query-app  
-    ng serve
+    cd backend
+    python run.py
 ```
 
 Now the website can be visited at `http://localhost:4200/`.
 
 ## Unit Testing
 For unit testing, run the following:
-```
+```bash
     cd backend/tests/
     pytest api_models.py        # tests the User and UserFile models used in the backend
     pytest sql_agent.py         # tests API for the SQL agent
