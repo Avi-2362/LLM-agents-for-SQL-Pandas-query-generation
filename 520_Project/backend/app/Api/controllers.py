@@ -24,12 +24,22 @@ from app.Api.enums import *
 allowed_hosts=["http://localhost:4200/*","http://localhost:4200"]
 
 class UserResource(FlaskView):
+    """
+    A resource class for handling user-related operations, such as file management and S3 upload URL generation.
+    """
+
     route_base = '/api/user/'
     # route_base = '/'
 
     @route('all/files', methods=['GET','POST'])
     @jwt_required()
     def get_user_files(self):
+        """
+        Retrieve all files associated with the current user.
+
+        Returns:
+            JSON: A JSON response containing the list of user files.
+        """
         print(request)
         user_id = get_jwt_identity()
         user = User.get(user_id) # TODO: need to get from jwt_identity
@@ -39,6 +49,12 @@ class UserResource(FlaskView):
     @route('delete/file', methods=['GET','POST'])
     @jwt_required()
     def delete_user_file(self):
+        """
+        Delete a specific file from the user's file list.
+
+        Returns:
+            JSON: A success message if the file is deleted, or an error message on failure.
+        """
         user_id = get_jwt_identity()
         user = User.get(user_id) 
         file_id = request.json.get('file_id')
@@ -61,7 +77,16 @@ class UserResource(FlaskView):
     @route('upload/file', methods=['POST'])
     @jwt_required()
     def upload_file(self):
-        '''
+        """
+        Upload file metadata to associate it with the user.
+
+        Request Body:
+            user_id (str): The ID of the user.
+            file (dict): A dictionary containing 'filename', 'file_id', and 'size'.
+
+        Returns:
+            JSON: The updated list of user files.
+
         ## This function should be called after generate-upload-url from frontend
         request body:
         {
@@ -72,7 +97,7 @@ class UserResource(FlaskView):
                 'size': <file-size-kb>
             }
         }
-        '''
+        """
         # user_id = request.json.get('user_id') # TODO: need to get from jwt_identity
         user_id = get_jwt_identity()
         userFiles = UserFiles.get(user_id)
@@ -97,6 +122,15 @@ class UserResource(FlaskView):
     
     @route('generate-upload-url', methods=['GET'])
     def generate_upload_url(self):
+        """
+        Generate a presigned S3 URL for uploading a file.
+
+        Query Parameters:
+            filename (str): The name of the file being uploaded.
+
+        Returns:
+            JSON: The presigned upload URL and a unique file ID.
+        """
         # print(request.args)
         file_id = str(uuid.uuid4())
         try:
@@ -126,6 +160,15 @@ class UserResource(FlaskView):
     # @route('view/file-url', methods=['GET'])
     @route('generate-view-url', methods=['GET'])
     def generate_view_url(self):
+        """
+        Generate a presigned S3 URL for viewing a file.
+
+        Query Parameters:
+            file_id (str): The ID of the file to view.
+
+        Returns:
+            JSON: The presigned view URL.
+        """
         try:
             file_id = request.args.get('file_id')
             params = {
@@ -145,17 +188,35 @@ class UserResource(FlaskView):
 
     
 class AuthResource(FlaskView):
+    """
+    A resource class for handling authentication operations, such as login, logout, and user registration.
+    """
     route_base = '/'
 
     @route('hello', methods=['GET', 'POST', 'OPTIONS'])
     def health_check(self):
+        """
+        A simple health check endpoint.
+
+        Returns:
+            JSON: A message indicating the service is running.
+        """
         return jsonify({'hello': "hello"})
     
     @route('new_user', methods=['POST'])
     def add_new_user(self):
-        '''
-        Register a new user
-        '''
+        """
+        Register a new user.
+
+        Request Body:
+            username (str): The username of the user.
+            name (str): The name of the user.
+            email (str): The email of the user.
+            hashed_password (str): The hashed password of the user.
+
+        Returns:
+            JSON: A message indicating success or failure of the registration.
+        """
         username = request.json.get('username')
         name = request.json.get('name')
         email = request.json.get('email')
@@ -209,6 +270,16 @@ class AuthResource(FlaskView):
     
     @route('login', methods=['POST'])
     def login(self):
+        """
+        Log in a user and generate a JWT token.
+
+        Request Body:
+            user_id (str): The ID of the user.
+            password (str): The hashed password of the user.
+
+        Returns:
+            JSON: A success message with the JWT token or an error message on failure.
+        """
         user_id = request.json.get('user_id')
         password = request.json.get('hashed_password')
         try: 
@@ -229,23 +300,47 @@ class AuthResource(FlaskView):
     @route('auth_check', methods=['GET'])
     @jwt_required()
     def auth_check(self):
+        """
+        Check if the current user is authenticated.
+
+        Returns:
+            JSON: The user's authentication status.
+        """
         current_user = get_jwt_identity()
         return jsonify(logged_in=True, user_id=current_user), 200
 
     @route("/logout", methods=["POST"])
     @jwt_required()
     def logout(self):
+        """
+        Log out the current user by clearing JWT cookies.
+
+        Returns:
+            JSON: A message indicating the user has logged out.
+        """
         response = jsonify({"msg": "Logout successful"})
         unset_jwt_cookies(response)  # Clear JWT cookies
         return response, 200
-    
-# This contains the business logic apis
+
 class ApiResource(FlaskView):
+    """
+    A resource class for handling business logic, such as querying data in pandas or SQL.
+    """
     route_base = '/'
 
     @route('get-pandas-query', methods=['POST'])
     @jwt_required()
     def get_pandas_query(self):
+        """
+        Generate and process a user query on a CSV file using pandas.
+
+        Request Body:
+            file_key (str): The S3 key of the file.
+            query (str): The user's query.
+
+        Returns:
+            JSON: The results of the query or an error message on failure.
+        """
         user_id=get_jwt_identity()
         print(user_id)
         # Get CSV file key and user query from the request
@@ -273,6 +368,16 @@ class ApiResource(FlaskView):
     @route('get-sql-query', methods=['POST'])
     @jwt_required()
     def get_sql_query(self):
+        """
+        Generate  SQL query based on user input.
+
+        Request Body:
+            file_key (str): The S3 key of the file.
+            query (str): The user's query.
+
+        Returns:
+            JSON: SQL query generated by LLM.
+        """
         user_id=get_jwt_identity()
         print(user_id)
         # Get CSV file key and user query from the request
