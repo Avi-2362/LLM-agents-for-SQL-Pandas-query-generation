@@ -34,8 +34,6 @@ export class DashboardComponent implements OnInit {
         this.is_logged_in = true;
         console.log('User logged in:', this.user_id, this.is_logged_in);
 
-        // Uncomment the following line once the backend structure is confirmed
-        // this.loadUserFiles();
         this.service.data$.subscribe((updatedData) => {
           console.log(updatedData);
           this.loadUserFiles();
