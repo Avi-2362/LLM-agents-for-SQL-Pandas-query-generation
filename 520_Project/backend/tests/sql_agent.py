@@ -1,3 +1,4 @@
+import json
 import pytest
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../app/Api')))
@@ -24,7 +25,7 @@ def test_query_sql_agent1():
     query = "filter rows where age is 21"
     try:
         sql_data = query_sql_agent(df, query)
-        passengers = [passenger['PassengerId'] for passenger in sql_data['result']]
+        passengers = json.loads(sql_data['result'])['PassengerId'].values()
         gt = open('passengers.txt', 'r+')
         gt = gt.read().split(',')
         gt = [int(i) for i in gt]
