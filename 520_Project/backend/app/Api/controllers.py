@@ -79,6 +79,8 @@ class UserResource(FlaskView):
         file_id = str(uuid.uuid4())
         try:
             filename = request.args.get('filename')
+            if filename.split(".")[-1]!="csv":
+                raise InvalidFileTypeException(filename)
             params = {
                 'Bucket': S3_BUCKET_NAME,
                 'Key': file_id,
@@ -89,6 +91,9 @@ class UserResource(FlaskView):
                 'url': url,
                 'file_id': file_id
                 })
+        except InvalidFileTypeException as e:
+            print(e)
+            return jsonify({"error": e.message})
         except (NoCredentialsError, PartialCredentialsError) as e:
             print(e)
             return jsonify({'error': 'Credentials error'}), 500

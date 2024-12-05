@@ -10,11 +10,16 @@ from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain.chains import create_sql_query_chain
 from sqlalchemy.sql import text
+# query validators
+from app.Api.query_validators import *
+# Exceptions
+from app.Api.exceptions import *
 
 # Loading variables from .env file
 from dotenv import load_dotenv
 load_dotenv()
 
+# constants
 PANDAS_AGENT_PROMPT = "Give me the pandas code to get answer to the query: {query}"
 SQL_AGENT_PROMPT = "Give me the SQL code to get answer to the following query. Do not select specific columns unless I ask you to do so. If I do not specify the number of rows, then assume that I want all such rows i.e. DO NOT USE LIMIT UNLESS I SPECIFY A NUMBER: {query}"
 
@@ -24,11 +29,17 @@ import pandas as pd
 df = pd.read_csv("filename.csv")
 """
 
+# pandas agent related functions
 def query_pandas_agent(df, query):
     if not isinstance(df, pd.core.frame.DataFrame):
         raise Exception("Invalid input. Please provide a pandas DataFrame")
     if not isinstance(query, str):
         raise Exception("Invalid input. Please provide a string query")
+    
+    # validate the given user query
+    valid_query = pandas_input_query_validator(query)
+    if not valid_query:
+        raise InvalidInputQueryException()
     
     agent = create_pandas_dataframe_agent(OpenAI(temperature=0), df, verbose=False,  allow_dangerous_code= True,
                                      return_intermediate_steps=True)
@@ -52,6 +63,7 @@ def process_pandas_result_to_json(res):
         data["result"] = res['intermediate_steps'][0][-1]
     return data
 
+## SQL agent related functions
 def csv_to_sqlite(df, db_file, table_name):
     """Converts a CSV file to an SQLite database table."""
     conn = sqlite3.connect(db_file)
@@ -64,6 +76,11 @@ def query_sql_agent(df, query):
     if not isinstance(query, str):
         raise Exception("Invalid input. Please provide a string query")
 
+    # validate the given user query
+    valid_query = sql_input_query_validator(query)
+    if not valid_query:
+        raise InvalidInputQueryException()
+    
     # convert to sqlite
     db_file = "temp_table.db"
     table_name = "temp_table"
@@ -102,15 +119,3 @@ def query_sql_agent(df, query):
 
     return json_output
     
-
-# Example Usage
-
-# df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-# # query = "filter rows where age > 21"
-# query = "how many people with age > 21?"
-# pandas_res = query_pandas_agent(df, query)
-# print(pandas_res['output'])
-# pandas_data = process_pandas_result_to_json(pandas_res)
-
-# sql_data = query_sql_agent(df, query)
-# print(sql_data['query'])
