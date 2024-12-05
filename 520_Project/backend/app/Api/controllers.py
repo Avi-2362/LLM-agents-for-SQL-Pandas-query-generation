@@ -36,6 +36,28 @@ class UserResource(FlaskView):
         print(user['user_id'])
         return jsonify(UserFiles.get(user['user_id']))
     
+    @route('delete/file', methods=['GET','POST'])
+    @jwt_required()
+    def delete_user_file(self):
+        user_id = get_jwt_identity()
+        user = User.get(user_id) 
+        file_id = request.json.get('file_id')
+        remove_file = None
+        try:
+            userFiles = UserFiles.get(user['user_id'])
+            print(userFiles)
+            for file in userFiles['files']:
+                if file['file_id'] == file_id:
+                    remove_file  = file
+                    break
+            userFiles['files'].remove(remove_file)
+            userFiles = UserFiles.from_dict(userFiles)
+            userFiles.put()
+            return jsonify({'msg':'success'}), 200
+        except Exception as ex:
+            return jsonify({'msg':'falied to delete', 'error': str(ex)}), 400
+
+
     @route('upload/file', methods=['POST'])
     @jwt_required()
     def upload_file(self):
@@ -116,12 +138,6 @@ class UserResource(FlaskView):
             print(e)
             return jsonify({'error': 'Error generating download URL'}), 500
 
-    
-    @route('delete/file')
-    def delete_file(self):
-        return jsonify({
-
-        })
     
 class AuthResource(FlaskView):
     route_base = '/'

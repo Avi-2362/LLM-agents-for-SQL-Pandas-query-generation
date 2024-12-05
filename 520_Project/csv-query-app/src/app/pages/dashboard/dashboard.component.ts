@@ -72,10 +72,28 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/file', fileId]);
   }
 
-  deleteFile(fileId: number, event: Event) {
+  deleteFile(fileId: string, event: Event) {
     event.stopPropagation(); // Prevent click event on the file card
-    this.files = this.files.filter((file) => file.file_id !== fileId);
-    console.log(`File with ID ${fileId} deleted.`);
+    console.log(fileId);
+
+    this.service.deleteUserFile(fileId).subscribe(
+      (response: any) => {
+        console.log(response);
+        if (response && response.msg == "success") {
+          
+          console.log('File deleted');
+          this.files = this.files.filter((file) => file.file_id !== fileId);
+          console.log(`File with ID ${fileId} deleted.`);
+        } else {
+          console.warn('Error deleting: ', response.error);
+        }
+      },
+      (error) => {
+        console.error('Failed to delete:', error);
+      }
+    );
+    
+    
   }
 
   toggleDropdown(): void {

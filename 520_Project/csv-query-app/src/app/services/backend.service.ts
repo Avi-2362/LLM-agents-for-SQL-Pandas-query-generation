@@ -71,6 +71,14 @@ export class BackendService {
     return this.http.post(Base_URL +`/api/user/upload/file`, data, { withCredentials: true })
   }
 
+  // Method to delete a user file using file_id
+  deleteUserFile(file_id: any){
+    const data = {
+      'file_id': file_id
+    };
+    return this.http.post(Base_URL + `/api/user/delete/file`, data, {withCredentials: true});
+  }
+
     // Method to ask query to the pandas llm
     getPandasQueryOutput(filekey: string, query: string, userid:string="default") {
       console.log("calling pandas llm agent...");
