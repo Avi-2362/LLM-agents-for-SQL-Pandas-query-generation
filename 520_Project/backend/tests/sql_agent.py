@@ -1,6 +1,7 @@
 import json
 import pytest
 import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../app/Api')))
 from llm_agent import *
 import pandas as pd
