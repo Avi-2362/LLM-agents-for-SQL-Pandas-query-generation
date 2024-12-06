@@ -90,4 +90,6 @@ For unit testing, run the following:
     pytest api_models.py        # tests the User and UserFile models used in the backend
     pytest sql_agent.py         # tests API for the SQL agent
     pytest pandas_agent.py      # tests API for the Pandas agent
+    pytest validation.py        # tests query validation         
 ```
+Alternatively, one can run all tests at once using `pytest *.py`
