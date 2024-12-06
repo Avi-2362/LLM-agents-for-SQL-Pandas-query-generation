@@ -62,7 +62,15 @@ This is a web-based tool to translate natural language inputs into SQL/Pandas qu
 ### Backend Setup  
 Install dependencies. Run from inside `520_Project/`:
 ```bash
+    conda create -n querygenai python==3.10
+    conda activate querygenai
     pip install -r requirements.txt
+```
+
+### Environment Variables
+Since we are using LLMs via the OpenAI API, the key needs to be set in the environment variables. For this, create a `.env` file inside of `backend/app/Api` with the following configuration:
+```
+OPENAI_API_KEY="YOUR_KEY_HERE"
 ```
 
 ## Running
