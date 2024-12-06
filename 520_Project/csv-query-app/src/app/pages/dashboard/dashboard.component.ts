@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService } from '../../services/backend.service';
+import { NotificationService } from '../../services/notification.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   providers: [BackendService],
-  imports: [HttpClientModule, CommonModule],
+  imports: [HttpClientModule, CommonModule, NavBarComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -18,11 +20,20 @@ export class DashboardComponent implements OnInit {
   dropdownOpen = false;
   hoveredFileId: number | null = null;
   files: any[] = [
-    { file_id: 'probs1', filename: 'File 1' }
   ]; // Placeholder data for file list
 
+  // Push notifications Error display messages
+  FILE_LOAD_ERROR_MESSAGE = "Failed to load user files!!"
+  FILE_DELETE_ERROR_MESSAGE = "Failed to delete user file!!"
+  FILE_UPLOAD_ERROR_MESSAGE = "Failed to upload!!"
+
+  // Push notifications Success display messages
+  FILE_UPLOAD_SUCCESS_MESSAGE = "Successfully Uploaded File!!"
+  FILE_DELETE_SUCCESS_MESSAGE = "Successfully Deleted File!!"
+
   constructor(
-    public service: BackendService,
+    private service: BackendService,
+    private notification: NotificationService,
     private http: HttpClient,
     private router: Router
   ) {}
@@ -44,6 +55,8 @@ export class DashboardComponent implements OnInit {
         this.is_logged_in = false;
         // redirect to auth page
         this.router.navigate(['/auth']);
+        // show notification
+        this.notification.showLoginAgainErrorNotification;
       }
     );
   }
@@ -60,6 +73,7 @@ export class DashboardComponent implements OnInit {
       },
       (error) => {
         console.error('Failed to load files:', error);
+        this.notification.showErrorNotification(this.FILE_LOAD_ERROR_MESSAGE)
       }
     );
   }
@@ -82,12 +96,15 @@ export class DashboardComponent implements OnInit {
           console.log('File deleted');
           this.files = this.files.filter((file) => file.file_id !== fileId);
           console.log(`File with ID ${fileId} deleted.`);
+          this.notification.showSuccessNotification(this.FILE_DELETE_SUCCESS_MESSAGE);
         } else {
           console.warn('Error deleting: ', response.error);
+          this.notification.showErrorNotification(this.FILE_DELETE_ERROR_MESSAGE);
         }
       },
       (error) => {
         console.error('Failed to delete:', error);
+        this.notification.showErrorNotification(this.FILE_DELETE_ERROR_MESSAGE);
       }
     );
     
@@ -99,32 +116,12 @@ export class DashboardComponent implements OnInit {
     console.log('Dropdown state:', this.dropdownOpen);
   }
 
-  logout(): void {
-    
-    this.service.logout().subscribe(
-      (response: any) => {
-        if (response && response.msg == "Logout successful") {
-          
-          console.log('Logged out...');
-          this.is_logged_in = false;
-          this.router.navigate(['/auth']);
-        } else {
-          console.warn('Error logging out');
-        }
-      },
-      (error) => {
-        console.error('Failed to logout:', error);
-      }
-    );
-    
-    
-  }
 
   async uploadFile(file:any) {
     if (!file) return;
 
     try {
-      const response: any = await this.service.getPresignedUploadUrl().toPromise();
+      const response: any = await this.service.getPresignedUploadUrl(file.name).toPromise();
       const presignedUrl = response?.url;
       const file_id = response?.file_id;
       console.log(presignedUrl);
@@ -140,11 +137,12 @@ export class DashboardComponent implements OnInit {
         const resp:any = await this.service.addFileToUser(file_data).toPromise();
         console.log("response", resp);
         this.service.updateData("files"); // can be any string
-        // this.files = resp?.files;
-        // console.log(this.files);
+        // notification for successful file upload!!
+        this.notification.showSuccessNotification(this.FILE_UPLOAD_SUCCESS_MESSAGE);
       }
     } catch (error) {
       console.error('Error uploading file', error);
+      this.notification.showErrorNotification(this.FILE_UPLOAD_ERROR_MESSAGE);
     }
   }
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import * as CryptoJS from 'crypto-js';
 import { BackendService } from '../../services/backend.service';
+import { NotificationService } from '../../services/notification.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -23,9 +24,20 @@ export class AuthComponent {
   showRegisterPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
+  // Error Messages notifications
+  CONFIRM_PASSWORD_MISMATCH_MESSAGE: string = "Password must match Confirm Password";
+  INVALID_CREDENTIALS_MESSAGE: string = "Invalid Email or Password!!"
+  USER_REGISTERATION_ERROR_MESSAGE: string = "Error Registering the user!!"
+  MISSING_REGISTRATION_DETAILS_MESSAGE: string = "Please fill all details!!"
+
+  // Success Messages
+  USER_REGISTERATION_SUCCESS_MESSAGE: string = "Successfully Registered User!! Login Now!!"
+  USER_LOGIN_SUCCESS_MESSAGE: string = "User Logged In Successfully!!"
+
   constructor(
     private formBuilder: FormBuilder,
     public service: BackendService,
+    private notification: NotificationService,
     private http: HttpClient,
     private route: Router
   ) {
@@ -56,10 +68,15 @@ export class AuthComponent {
       console.log("validated!!");
       const {email, password, confirm_password} = this.registerForm.value;
       if (password == confirm_password){
-        console.log("password matched!!!")
+        // console.log("password matched!!!")
         this.hashAndSendPasswordForRegister();
+      } else {
+        this.notification.showErrorNotification(this.CONFIRM_PASSWORD_MISMATCH_MESSAGE)
       }
       console.log(this.registerForm.value);
+    } else {
+      console.log("Registration form Invalid");
+      this.notification.showErrorNotification(this.MISSING_REGISTRATION_DETAILS_MESSAGE);
     }
   }
   // Hash the password and send it for registration
@@ -76,8 +93,10 @@ export class AuthComponent {
       this.registerForm.reset();
       console.log("login now!!");
       this.toggleFlip();
+      this.notification.showSuccessNotification(this.USER_REGISTERATION_SUCCESS_MESSAGE);
     } catch (error) {
       console.error('Error logging in', error);
+      this.notification.showErrorNotification(this.USER_REGISTERATION_ERROR_MESSAGE);
     }
   }
   // Hash the password and send it for login
@@ -92,8 +111,11 @@ export class AuthComponent {
     try {
       const response = await this.service.login(email, hashedPassword).toPromise();
       this.route.navigate(['dashboard']); // Navigate on successful login
+      this.notification.showSuccessNotification(this.USER_LOGIN_SUCCESS_MESSAGE);
     } catch (error) {
       console.error('Error logging in', error);
+      this.notification.showErrorNotification(this.INVALID_CREDENTIALS_MESSAGE);
+
     }
   }
 

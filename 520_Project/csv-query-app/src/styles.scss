@@ -18,3 +18,28 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin: 5px 0;
   }
   
+  .mat-snack-bar-container {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  
+  // .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  //   background-color: lightgray !important;
+  // }
+
+/* Success Notification */
+.mat-mdc-snack-bar-container.success-snackbar .mat-mdc-snackbar-surface {
+  border: 2px solid #4caf50; /* Green Border */
+  color: #4caf50 !important; /* Green Text */
+  font-weight: bold;
+  border-radius: 4px; /* Optional for rounded corners */
+}
+
+/* Failure Notification */
+.mat-mdc-snack-bar-container.error-snackbar .mat-mdc-snackbar-surface {
+  border: 2px solid #f44336; /* Red Border */
+  color: #f44336 !important; /* Red Text */
+  font-weight: bold;
+  border-radius: 4px; /* Optional for rounded corners */
+}

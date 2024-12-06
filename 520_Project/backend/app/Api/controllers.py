@@ -135,6 +135,7 @@ class UserResource(FlaskView):
         file_id = str(uuid.uuid4())
         try:
             filename = request.args.get('filename')
+            print(filename)
             if filename.split(".")[-1]!="csv":
                 raise InvalidFileTypeException(filename)
             params = {

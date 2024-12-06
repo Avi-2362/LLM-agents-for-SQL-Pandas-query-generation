@@ -1,43 +1,5 @@
 <!-- Navigation Bar -->
-<div class="navbar">
-  <div class="logo">
-    <img src="assets/images/logo.png" alt="Logo" />
-  </div>
-  <div class="website-title">
-    <h1>QueryGenAI</h1>
-  </div>
-  <div class="profile">
-    <button class="signout-button" (click)="logout()">
-      Sign Out
-    </button>
-  </div>
-</div>
-
-
-
-
-  <!-- <div class="p-6 bg-gray-100 min-h-screen">
-    <h1 class="text-3xl font-bold text-center mb-8">Your Files</h1>
-  
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div
-        class="bg-white shadow-md rounded-lg p-4 text-center cursor-pointer transform hover:scale-105 transition duration-200"
-        *ngFor="let file of files"
-        (click)="openFile(file.id)"
-      >
-        <div class="mb-4">
-          <img
-            src="assets/images/file-icon.png"
-            alt="File Icon"
-            class="w-12 h-12 mx-auto"
-          />
-        </div>
-        <h3 class="text-lg font-medium text-gray-800 mb-2">{{ file.name }}</h3>
-      </div>
-    </div>
-  </div> -->
-  
-
+<app-nav-bar></app-nav-bar>
 
    <div class="dashboard">
     <h1 class="title">Your Files</h1>

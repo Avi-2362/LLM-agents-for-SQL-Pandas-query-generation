@@ -45,9 +45,8 @@ export class BackendService {
   }
 
   // Method to request a pre-signed URL for uploading
-  getPresignedUploadUrl() {
-    // return this.http.get<{ url: string }>(Base_URL +`/api/user/generate-upload-url?filename=${filename}`);
-    return this.http.get(Base_URL +`/api/user/generate-upload-url`);
+  getPresignedUploadUrl(filename: string) {
+    return this.http.get<{ url: string }>(Base_URL +`/api/user/generate-upload-url?filename=${filename}`);
   }
 
   // Method to request a pre-signed URL for downloading

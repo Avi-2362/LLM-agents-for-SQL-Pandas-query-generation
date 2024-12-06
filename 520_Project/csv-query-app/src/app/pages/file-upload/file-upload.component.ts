@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BackendService } from '../../services/backend.service';
+import { NotificationService } from '../../services/notification.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import * as XLSX from 'xlsx'; // Import XLSX for parsing Excel/CSV files
 import { Router, ActivatedRoute } from '@angular/router';
 import { VoiceService } from '../../services/voice.service';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sql';   // Import SQL grammar
@@ -24,7 +26,7 @@ interface ChatMessage {
   styleUrls: ['./file-upload.component.scss'],
   standalone: true,
   providers: [BackendService],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, NavBarComponent],
 })
 export class FileUploadComponent implements OnInit {
   chatQuery = '';
@@ -38,19 +40,23 @@ export class FileUploadComponent implements OnInit {
   // Add chatMessages property
   chatMessages: ChatMessage[] = [];
 
-  // python code
-  pythonCode: string  = `
-def greet(name):
-    print(f"Hello, {name}!")
-
-greet("World")
-  `;
-  sqlQuery: string = `SELECT * FROM TABLE;`
+  // python code/ SQL query display variables
+  pythonCode: string  = `CLick Submit to show the corresponding Python code`;
+  sqlQuery: string = `CLick Submit to show the corresponding SQL Query`
   highlightedCode: string = '';
+
+  // Push notifications Error display messages
+  GENERATED_SUCCESS_MESSAGE = "Generated Results SuccessFully!!"
+  COPY_SUCCESS_MESSAGE = "Successfully copied to clipboard!!"
+
+  // Push notifications Success display messages
+  GENERATED_FAILED_MESSAGE = "Failed to generate results!!"
+  COPY_FAILED_MESSAGE = "Successfully copied to clipboard!!"
 
   constructor(
     private fb: FormBuilder,
-    public service: BackendService,
+    private service: BackendService,
+    private notification: NotificationService,
     private router: Router,
     private route: ActivatedRoute,
     private speechRecognitionService: VoiceService,
@@ -85,6 +91,7 @@ greet("World")
         console.error('Access denied', error, this.is_logged_in);
         // redirect to auth page
         this.router.navigate(['/auth']);
+        this.notification.showLoginAgainErrorNotification();
       }
     );
 
@@ -182,9 +189,11 @@ greet("World")
                   });
                   return row;
                 });
+                this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
               },
               error: (error) => {
                 console.error('Error sending the query', error);
+                this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
               },
             });
           } else {
@@ -206,9 +215,11 @@ greet("World")
                   });
                   return row;
                 });
+                this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
               },
               error: (error) => {
                 console.error('Error sending the query', error);
+                this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
               },
             });
           }
@@ -218,6 +229,7 @@ greet("World")
         }
       } catch (error) {
         console.error('Unexpected error in query submission', error);
+        this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
       }
 
       // this.queryResult = `Results for query: ${this.query}`;
@@ -228,24 +240,6 @@ greet("World")
     this.dropdownOpen = !this.dropdownOpen;
   }
 
-  logout(): void {
-    
-    this.service.logout().subscribe(
-      (response: any) => {
-        if (response && response.msg == "Logout successful") {
-          
-          console.log('Logged out...');
-          this.is_logged_in = false;
-          this.router.navigate(['/auth']);
-        } else {
-          console.warn('Error logging out');
-        }
-      },
-      (error) => {
-        console.error('Failed to logout:', error);
-      }
-    );
-  }
 
   queryType: string = 'SQL'; // Default to 'Pandas'
 
@@ -263,9 +257,10 @@ greet("World")
 
   copyCode(): void {
     navigator.clipboard.writeText(this.pythonCode).then(() => {
-      alert('Code copied to clipboard!');
+      this.notification.showSuccessNotification(this.COPY_SUCCESS_MESSAGE);
     }).catch(err => {
       console.error('Could not copy text: ', err);
+      this.notification.showErrorNotification(this.COPY_FAILED_MESSAGE);
     });
   }
 
