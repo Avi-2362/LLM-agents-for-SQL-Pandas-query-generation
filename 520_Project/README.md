@@ -69,8 +69,8 @@ Install dependencies. Run from inside `520_Project/`:
 
 ### Environment Variables
 Since we are using LLMs via the OpenAI API, the key needs to be set in the environment variables. For this, create a `.env` file inside of `backend/app/Api` with the following configuration:
-```
-OPENAI_API_KEY="YOUR_KEY_HERE"
+```bash
+    OPENAI_API_KEY="YOUR_KEY_HERE"
 ```
 
 ## Running
