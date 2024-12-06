@@ -284,25 +284,34 @@ h2 {
   border-radius: 5px;
   cursor: pointer;
 }
-
+ 
 .signout-button:hover {
   background-color: #0056b3;
 }
 
+h4 {
+  margin-top: 15px; /* Maintain some spacing below the heading */
+}
+
 // pandas code display
 .code-container {
-  position: relative;
-  // padding: 10px;
+  width: 100%; /* Or a fixed width if required */
+  height: 150px; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  border: 1px solid #ccc; /* Optional: Add a border for clarity */
+  border-radius: 5px; /* Optional: Rounded corners */
+  background-color: #f9f9f9; /* Optional: Background color */
+  box-sizing: border-box; /* Ensures padding/border don't increase size */
+  padding: 10px;
+  
 }
 
 pre {
+  width: 100%; /* Or a fixed width if required */
+  height: 150px; /* Set a fixed height */
   background-color: #f9f9f9;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
   font-family: 'Courier New', Courier, monospace;
-  overflow-x: auto;
-  white-space: pre-wrap;
+
 }
 .copy-container {
   display: flex;
@@ -311,17 +320,20 @@ pre {
 }
 
 .copy-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  align-items: center;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
+  position: absolute; /* Position the button inside the container */
+  top: 170px; /* Adjust distance from the top */
+  right: 30px; /* Adjust distance from the right */
+  padding: 5px 10px; /* Button padding */
+  background-color: #007bff; /* Button background */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 14px; /* Adjust font size */
+  z-index: 10; /* Ensure the button appears above other content */
 }
+
+
 
 // .copy-btn {
 //   position: absolute;

@@ -50,7 +50,7 @@ def query_pandas_agent(df, query):
     return res
 
 def process_pandas_result_to_json(res):
-    code = FULL_PYTHON_STARTER_CODE + '\n'+f"print({res['intermediate_steps'][0][0].dict()['tool_input']})"
+    code = FULL_PYTHON_STARTER_CODE.strip() + '\n'+f"print({res['intermediate_steps'][0][0].dict()['tool_input']})"
     data = {
         "query": code
     }

@@ -41,8 +41,8 @@ export class FileUploadComponent implements OnInit {
   chatMessages: ChatMessage[] = [];
 
   // python code/ SQL query display variables
-  pythonCode: string  = `CLick Submit to show the corresponding Python code`;
-  sqlQuery: string = `CLick Submit to show the corresponding SQL Query`
+  pythonCode: string  = `Click Submit to show the corresponding Python code`;
+  sqlQuery: string = `Click Submit to show the corresponding SQL Query`
   highlightedCode: string = '';
 
   // Push notifications Error display messages
