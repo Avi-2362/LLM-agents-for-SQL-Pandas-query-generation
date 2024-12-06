@@ -73,6 +73,8 @@
        
       <h4>Results</h4>
       <div class="result-table-container" *ngIf="isResultTable">
+        <button (click)="downloadCsv()" class="download-btn"><i class="fa fa-download"></i></button>
+
         <table *ngIf="data.length" border="1">
           <thead>
             <tr>

@@ -164,13 +164,85 @@ export class FileUploadComponent implements OnInit {
     });
   }
 
+  // async onSubmitQuery() {
+  //   console.log("called onSubmitQuery");
+  //   if (this.query) {
+  //     console.log('Query submitted:', this.query);
+  //     try {
+  //       if (true) {
+  //         if (this.queryType=="Pandas"){
+  //           this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
+  //             next: (response: any) => {
+  //               console.log(response);
+  //               const result = JSON.parse(response['result']);
+  //               this.queryResult = response['query'];
+  //               this.pythonCode = this.queryResult;
+  //               this.service.updateDataPython("python");
+  //               this.headers = Object.keys(result);
+  //               this.isResultTable = response['is_table'];
+  
+  //               const rows = Object.keys(result[this.headers[0]]);
+  //               this.data = rows.map((rowId) => {
+  //                 let row: any = {};
+  //                 this.headers.forEach((header) => {
+  //                   row[header] = result[header][rowId];
+  //                 });
+  //                 return row;
+  //               });
+  //               this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
+  //             },
+  //             error: (error) => {
+  //               console.error('Error sending the query', error);
+  //               this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+  //             },
+  //           });
+  //         } else {
+  //           this.service.getSqlQueryOutput(this.file_id, this.query, 'default').subscribe({
+  //             next: (response: any) => {
+  //               console.log(response);
+  //               const result = JSON.parse(response['result']);
+  //               this.queryResult = response['query'];
+  //               this.sqlQuery = this.queryResult;
+  //               this.service.updateDataPython("sql");
+  //               this.headers = Object.keys(result);
+  //               this.isResultTable = response['is_table'];
+  
+  //               const rows = Object.keys(result[this.headers[0]]);
+  //               this.data = rows.map((rowId) => {
+  //                 let row: any = {};
+  //                 this.headers.forEach((header) => {
+  //                   row[header] = result[header][rowId];
+  //                 });
+  //                 return row;
+  //               });
+  //               this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
+  //             },
+  //             error: (error) => {
+  //               console.error('Error sending the query', error);
+  //               this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+  //             },
+  //           });
+  //         }
+          
+  //       } else {
+  //         console.log('No file found!!');
+  //       }
+  //     } catch (error) {
+  //       console.error('Unexpected error in query submission', error);
+  //       this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+  //     }
+
+  //     // this.queryResult = `Results for query: ${this.query}`;
+  //   }
+  // }
+
   async onSubmitQuery() {
     console.log("called onSubmitQuery");
     if (this.query) {
       console.log('Query submitted:', this.query);
       try {
         if (true) {
-          if (this.queryType=="Pandas"){
+          if (this.queryType == "Pandas") {
             this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
               next: (response: any) => {
                 console.log(response);
@@ -223,7 +295,7 @@ export class FileUploadComponent implements OnInit {
               },
             });
           }
-          
+  
         } else {
           console.log('No file found!!');
         }
@@ -231,10 +303,29 @@ export class FileUploadComponent implements OnInit {
         console.error('Unexpected error in query submission', error);
         this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
       }
-
-      // this.queryResult = `Results for query: ${this.query}`;
     }
   }
+  
+  // Function to download data as CSV
+  downloadCsv() {
+    const headers = this.headers.join(',');  // Join headers as the first row in the CSV
+    const rows = this.data.map((row: any) =>
+      this.headers.map((header: string) => row[header]).join(',')
+    );  // Join the data for each row
+  
+    // Combine headers and rows into a single string
+    const csvContent = [headers, ...rows].join('\n');
+  
+    // Create a Blob with the CSV content and trigger the download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'query_results.csv');
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+  
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;

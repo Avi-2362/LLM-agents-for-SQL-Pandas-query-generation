@@ -361,3 +361,21 @@ pre {
 }
 
 
+
+.download-btn {
+  position: relative; /* Position the button inside the container */
+  // top: 170px; /* Adjust distance from the top */
+  left: 95%; /* Adjust distance from the right */
+  padding: 5px 10px; /* Button padding */
+  background-color: #007bff; /* Button background */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 14px; /* Adjust font size */
+  z-index: 10; /* Ensure the button appears above other content */
+}
+
+.download-btn:hover {
+  background-color: #0056b3; /* Darker green when hovered */
+}
