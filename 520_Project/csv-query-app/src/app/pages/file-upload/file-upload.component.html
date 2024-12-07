@@ -78,9 +78,12 @@
         </button>
       </div>
       
-      <div class="result-table-container" *ngIf="isResultTable">
+      <!-- Reloading Spinner -->
+      <div id="reloading" class="reloading-container" *ngIf="isLoading">
+        <div class="reloading-spinner"></div>
+      </div>
       
-
+      <div class="result-table-container" *ngIf="!isLoading && isResultTable">
         <table *ngIf="data.length" border="1">
           <thead>
             <tr>

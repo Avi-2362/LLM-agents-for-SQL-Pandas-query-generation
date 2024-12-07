@@ -32,6 +32,7 @@ export class FileUploadComponent implements OnInit {
   chatQuery = '';
   user_id = '';
   is_logged_in = false;
+  isLoading: boolean = false; // To manage the reloading animation
   file_id: any;
 
   // New properties for header dropdown functionality
@@ -240,6 +241,8 @@ export class FileUploadComponent implements OnInit {
     console.log("called onSubmitQuery");
     if (this.query) {
       console.log('Query submitted:', this.query);
+      this.isLoading = true; // Start reloading animation
+  
       try {
         if (true) {
           if (this.queryType == "Pandas") {
@@ -262,10 +265,12 @@ export class FileUploadComponent implements OnInit {
                   return row;
                 });
                 this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
+                this.isLoading = false; // Stop reloading animation
               },
               error: (error) => {
                 console.error('Error sending the query', error);
                 this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+                this.isLoading = false; // Stop reloading animation on error
               },
             });
           } else {
@@ -288,23 +293,27 @@ export class FileUploadComponent implements OnInit {
                   return row;
                 });
                 this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
+                this.isLoading = false; // Stop reloading animation
               },
               error: (error) => {
                 console.error('Error sending the query', error);
                 this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+                this.isLoading = false; // Stop reloading animation on error
               },
             });
           }
-  
         } else {
           console.log('No file found!!');
+          this.isLoading = false; // Stop reloading animation if no file is found
         }
       } catch (error) {
         console.error('Unexpected error in query submission', error);
         this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+        this.isLoading = false; // Stop reloading animation on exception
       }
     }
   }
+  
   
   // Function to download data as CSV
   downloadCsv() {
