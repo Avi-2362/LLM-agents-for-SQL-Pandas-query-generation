@@ -14,7 +14,9 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
+
 export class DashboardComponent implements OnInit {
+  isFileUploaded: boolean = false;
   user_id = '';
   is_logged_in = false;
   dropdownOpen = false;
@@ -38,6 +40,7 @@ export class DashboardComponent implements OnInit {
     private router: Router
   ) {}
 
+  
   ngOnInit(): void {
     this.service.isLoggedIn().subscribe(
       (response: any) => {
@@ -152,16 +155,18 @@ export class DashboardComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       console.log('File uploaded:', file.name);
-      try{
+      try {
         await this.uploadFile(file);
-
-      }
-      catch (error)
-      {
+        this.isFileUploaded = true; // Set to true after successful upload
+      } catch (error) {
         console.error('Error uploading file', error);
+        this.isFileUploaded = false; // Ensure it remains false if an error occurs
       }
-      // Make sure that you save file meta data in backend if uploaded sucessufylly 
+      // Make sure that you save file meta data in backend if uploaded successfully
     }
+  }
+  get showUploadGuide(): boolean {
+    return !this.isFileUploaded && this.files.length === 0;
   }
   
 }
