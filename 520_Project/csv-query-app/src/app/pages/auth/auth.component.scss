@@ -7,8 +7,8 @@
 
 /* Website Title */
 .website-title {
+  top: 18%;
   position: absolute;
-  top: 100px; /* Adjust spacing from the top of the container */
   width: 100%; /* Center align */
   text-align: center;
   font-size: 2rem;
@@ -18,6 +18,7 @@
 }
 
 .website-title h1 {
+
   font-size: 3rem; /* Adjust the font size for visibility */
   font-weight: bold; /* Make the text bold */
   color: #ffffff; /* White color for contrast */
@@ -41,7 +42,7 @@
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   position: relative; /* Absolute positioning for centering */
-  top: 20%; /* Move to the middle of the page */
+  top: 25%; /* Move to the middle of the page */
   // left: 50%; /* Move to the center of the page */
   // transform: translate(-50%, -50%); /* Adjust position to ensure centering */
   width: 100%; /* Occupy full width of the viewport */
@@ -126,7 +127,7 @@
   border-radius: 25px; /* Rounded edges for the button */
   font-size: 1rem;
   padding: 0.5rem 1.5rem;
-  background: linear-gradient(135deg, #0492C2, #70D4E0); /* Gradient with the requested color */
+  background: linear-gradient(135deg, #00b8cd, #74dfeb); /* Gradient with the requested color */
   color: #fff; /* White text for contrast */
   border: none;
   cursor: pointer;
@@ -139,7 +140,7 @@
 }
 
 .auth-card-reg .btn:hover {
-  background: linear-gradient(135deg, #70D4E0, #0492C2); /* Reverse gradient for hover effect */
+  background: linear-gradient(135deg, #00b8cd, #74dfeb); /* Reverse gradient for hover effect */
 }
 
 
@@ -175,8 +176,8 @@
 
 .form-group .form-control:focus {
   outline: none;
-  border-color: #0492C2; /* Highlight border with the requested color on focus */
-  box-shadow: 0 0 5px #0492C2; /* Optional: Add a subtle glow effect */
+  border-color: #00b8cd; /* Highlight border with the requested color on focus */
+  box-shadow: 0 0 5px #74dfeb; /* Optional: Add a subtle glow effect */
 }
 
 
@@ -213,7 +214,7 @@
   border-radius: 25px; /* Rounded edges for the button */
   font-size: 1rem;
   padding: 0.5rem 1.5rem;
-  background: linear-gradient(135deg, #0492C2 0%, #036A91 100%); /* Updated gradient with requested color */
+  background: linear-gradient(135deg, #00b8cd 0%,  #74dfeb 100%); /* Updated gradient with requested color */
   color: #fff;
   border: none;
   cursor: pointer;
@@ -226,13 +227,13 @@
 }
 
 .auth-card .btn:hover {
-  background: rgba(4, 146, 194, 0.9); /* Slightly transparent requested color on hover */
+  background: #74dfeb; /* Slightly transparent requested color on hover */
 }
 
 /* Auth Illustration */
 .auth-illustration {
   width: 50%; /* Take up the other half of the inner container */
-  background: linear-gradient(135deg, #0492C2 0%, #036A91 100%); /* Updated gradient with requested color */
+  background: linear-gradient(135deg, #00b8cd 0%, #74dfeb 100%); /* Updated gradient with requested color */
   display: flex;
   flex-direction: column; /* Arrange content vertically */
   justify-content: center; /* Center content vertically */
@@ -269,7 +270,7 @@
 }
 
 .auth-illustration .btn:hover {
-  background: #0492C2; /* Updated to requested color */
+  background: #00b8cd; /* Updated to requested color */
   color: #fff; /* Keep text color white for contrast */
 }
 
