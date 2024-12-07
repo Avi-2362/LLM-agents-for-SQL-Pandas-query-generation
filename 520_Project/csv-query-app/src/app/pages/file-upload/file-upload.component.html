@@ -71,9 +71,15 @@
         <button (click)="copyCode()" class="copy-button"><i class="fa fa-copy"></i></button>
       </div>
        
-      <h4>Results</h4>
+      <div class="results-header">
+        <h4>Results</h4>
+        <button (click)="downloadCsv()" class="download-btn">
+          <i class="fa fa-download"></i>
+        </button>
+      </div>
+      
       <div class="result-table-container" *ngIf="isResultTable">
-        <button (click)="downloadCsv()" class="download-btn"><i class="fa fa-download"></i></button>
+      
 
         <table *ngIf="data.length" border="1">
           <thead>
