@@ -101,3 +101,11 @@ For unit testing, run the following:
     pytest validation.py        # tests query validation         
 ```
 Alternatively, one can run all tests at once using `pytest *.py`
+
+## AI Models
+
+We use the following LLM models for processing results for various agents
+```
+Model for Pandas Agent = "gpt-3.5-turbo-instruct"
+Model for SQL Agent = "gpt-4o-mini"
+```
