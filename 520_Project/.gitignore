@@ -5,3 +5,4 @@ backend/app/.env
 .pytest_cache/
 *.DS_Store*
 *AWSCLIV2.pkg*
+*.log

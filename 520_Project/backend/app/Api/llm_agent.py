@@ -22,6 +22,9 @@ load_dotenv()
 # LLM config variables
 from app.Api.llm_agent_config import *
 
+# Logger
+from app.logger import logger
+
 # pandas agent related functions
 def query_pandas_agent(df, query):
     """
@@ -44,9 +47,9 @@ def query_pandas_agent(df, query):
     agent = create_pandas_dataframe_agent(OpenAI(model=PANDAS_LLM_MODEL, temperature=0), df, verbose=False,  allow_dangerous_code= True,
                                      return_intermediate_steps=True)
     prompt = PANDAS_AGENT_PROMPT.format(query=query)
-    print(prompt)
+    logger.info(prompt)
     res = agent.invoke(prompt)
-    print(res)
+    logger.info(res)
     return res
 
 def process_pandas_result_to_json(res):
@@ -61,7 +64,7 @@ def process_pandas_result_to_json(res):
     data = {
         "query": code
     }
-    print(res)
+    logger.info(res)
     if(isinstance(res['intermediate_steps'][0][-1],pd.core.frame.DataFrame)):
         data["is_table"] = True
         data["result"] = res['intermediate_steps'][0][-1].to_json()
@@ -105,7 +108,7 @@ def query_sql_agent(df, query):
     # run the query via langchain
     chain = create_sql_query_chain(ChatOpenAI(model=SQL_LLM_MODEL), temp_db)
     prompt = SQL_AGENT_PROMPT.format(query=query)
-    print(prompt)
+    logger.info(prompt)
     sql_res = chain.invoke({"question": prompt}).split('SQLQuery: ')[1]
     # output_str = temp_db.run(sql_res)
 
@@ -124,7 +127,6 @@ def query_sql_agent(df, query):
         json_output['is_table'] = True
         table_json = [dict(zip(columns, row)) for row in rows]
         table_df = pd.DataFrame(table_json)
-        # print(table_df.head())
         table_json = table_df.to_json()
 
     json_output['query'] = sql_res

@@ -20,6 +20,8 @@ from app.Api.llm_agent import process_pandas_result_to_json, query_pandas_agent,
 from app.Api.models import *
 from app.Api.exceptions import *
 from app.Api.enums import *
+# import logger
+from app.logger import logger
 
 allowed_hosts=["http://localhost:4200/*","http://localhost:4200"]
 
@@ -40,10 +42,9 @@ class UserResource(FlaskView):
         Returns:
             JSON: A JSON response containing the list of user files.
         """
-        print(request)
         user_id = get_jwt_identity()
-        user = User.get(user_id) # TODO: need to get from jwt_identity
-        print(user['user_id'])
+        user = User.get(user_id) 
+        logger.info(f"username: {user['user_id']}")
         return jsonify(UserFiles.get(user['user_id']))
     
     @route('delete/file', methods=['GET','POST'])
@@ -61,7 +62,7 @@ class UserResource(FlaskView):
         remove_file = None
         try:
             userFiles = UserFiles.get(user['user_id'])
-            print(userFiles)
+            logger.info(f"user files: {userFiles}")
             for file in userFiles['files']:
                 if file['file_id'] == file_id:
                     remove_file  = file
@@ -101,23 +102,21 @@ class UserResource(FlaskView):
         # user_id = request.json.get('user_id') # TODO: need to get from jwt_identity
         user_id = get_jwt_identity()
         userFiles = UserFiles.get(user_id)
-        print("user files")
-        print(userFiles)
         # current file
         filename = request.json.get('filename')
         file_id = request.json.get('file_id')
         date = str(datetime.utcnow())
-        print(request.json)
-        print(f"filename: {filename}")
+        logger.info(request.json)
+        logger.info(f"filename: {filename}")
         userFiles['files'].append({
             "filename": filename,
             "file_id": file_id,
             "date": date
         })
         userFiles = UserFiles.from_dict(userFiles)
-        print(userFiles)
+        logger.info(userFiles)
         userFiles.put() # put in user-files
-        print(userFiles.to_json())
+        logger.info("Successfully updated userfiles")
         return jsonify(userFiles.to_json())
     
     @route('generate-upload-url', methods=['GET'])
@@ -131,11 +130,10 @@ class UserResource(FlaskView):
         Returns:
             JSON: The presigned upload URL and a unique file ID.
         """
-        # print(request.args)
         file_id = str(uuid.uuid4())
         try:
             filename = request.args.get('filename')
-            print(filename)
+            logger.info(filename)
             if filename.split(".")[-1]!="csv":
                 raise InvalidFileTypeException(filename)
             params = {
@@ -149,13 +147,13 @@ class UserResource(FlaskView):
                 'file_id': file_id
                 })
         except InvalidFileTypeException as e:
-            print(e)
+            logger.error(e)
             return jsonify({"error": e.message})
         except (NoCredentialsError, PartialCredentialsError) as e:
-            print(e)
+            logger.error(e)
             return jsonify({'error': 'Credentials error'}), 500
         except Exception as e:
-            print(e)
+            logger.error(e)
             return jsonify({'error': 'Error generating upload URL'}), 500
 
     # @route('view/file-url', methods=['GET'])
@@ -177,14 +175,13 @@ class UserResource(FlaskView):
                 'Key': file_id
             }
             url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
-            print(url)
+            logger.info(url)
             return jsonify({'url': url})
         except (NoCredentialsError, PartialCredentialsError) as e:
-            print(e)
+            logger.error(e)
             return jsonify({'error': 'Credentials error'}), 500
         except Exception as e:
-            print("*"*100)
-            print(e)
+            logger.error(e)
             return jsonify({'error': 'Error generating download URL'}), 500
 
     
@@ -202,6 +199,7 @@ class AuthResource(FlaskView):
         Returns:
             JSON: A message indicating the service is running.
         """
+        logger.info("Accessed Hello method")
         return jsonify({'hello': "hello"})
     
     @route('new_user', methods=['POST'])
@@ -228,14 +226,13 @@ class AuthResource(FlaskView):
             "email": email,
             "hashed_password": hashed_password
         }
-        print(request.json)
-        print(data)
+        logger.info(data)
         try:
-            # data = request.json # data.keys = ('username', 'name', 'email')
+            # data.keys = ('username', 'name', 'email')
             # check if the user already exists
-            print(f"{data['username']}")
+            logger.info(f"username: {data['username']}")
             user = User.get(data['username'])
-            print(user)
+            logger.info(user)
             if user is not None:
                 user = User.from_dict(user)
                 raise UserAlreadyExistsException(user.username)
@@ -244,7 +241,7 @@ class AuthResource(FlaskView):
             if status==Status.VALID:
                 # 1. Add the user in user table
                 user.put()
-                print("put the user!!")
+                logger.info("put the user!!")
                 # 2. Add in user files table
                 usr_files = UserFiles(user.user_id, files=[])
                 usr_files.put()
@@ -253,17 +250,17 @@ class AuthResource(FlaskView):
                 "msg": "New user added successfully!!"
             })
         except InvalidInputException as e:
-            print(f"error-1 : {e}")
+            logger.error(f"error-1 : {e}")
             return jsonify({
                 "msg": str(e)
             }),404
         except UserAlreadyExistsException as e:
-            print(f"error-2: {e}")
+            logger.error(f"error-2: {e}")
             return jsonify({
                 "msg": str(e)
             }),404
         except Exception as e:
-            print(f"error-3: {e.with_traceback()}")
+            logger.error(f"error-3: {e.with_traceback()}")
             return jsonify({
                 "msg": f"{e}"
             }),404
@@ -285,17 +282,18 @@ class AuthResource(FlaskView):
         password = request.json.get('hashed_password')
         try: 
             resp = User.get(user_id)
-            print(resp)
+            logger.info(resp)
             if resp is not None and resp['hashed_password']==password:
                 access_token = create_access_token(identity=user_id)
-                print(access_token)
+                logger.info(f"created access token for user: {user_id}")
                 response = jsonify({"msg": "Login successful"})
                 set_access_cookies(response, access_token)  # Set JWT token as a cookie
                 return response, 200
             else:
+                logger.info("Wrong username or password!")
                 return jsonify({"msg": "Bad username or password"}), 401
         except Exception as e:
-            print("error....",e)
+            logger.error("error....",e)
             return jsonify({"msg": "Bad username or password"}), 401
     
     @route('auth_check', methods=['GET'])
@@ -321,6 +319,7 @@ class AuthResource(FlaskView):
         """
         response = jsonify({"msg": "Logout successful"})
         unset_jwt_cookies(response)  # Clear JWT cookies
+        logger.info("User logged out!!")
         return response, 200
 
 class ApiResource(FlaskView):
@@ -343,7 +342,7 @@ class ApiResource(FlaskView):
             JSON: The results of the query or an error message on failure.
         """
         user_id=get_jwt_identity()
-        print(user_id)
+        logger.info(user_id)
         # Get CSV file key and user query from the request
         data = request.json
         file_key = data.get('file_key')
@@ -358,7 +357,7 @@ class ApiResource(FlaskView):
                 'Key': file_key
             }
         url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
-        print(f'url: {url}')
+        logger.info(f'url: {url}')
         df = pd.read_csv(url)
         res = query_pandas_agent(df,user_query)
         llm_output = process_pandas_result_to_json(res)
@@ -380,7 +379,7 @@ class ApiResource(FlaskView):
             JSON: SQL query generated by LLM.
         """
         user_id=get_jwt_identity()
-        print(user_id)
+        logger.info(user_id)
         # Get CSV file key and user query from the request
         data = request.json
         file_key = data.get('file_key')
@@ -395,7 +394,7 @@ class ApiResource(FlaskView):
                 'Key': file_key
             }
         url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
-        print(f'url: {url}')
+        logger.info(f'url: {url}')
         df = pd.read_csv(url)
         llm_output = query_sql_agent(df,user_query)
 

@@ -199,24 +199,3 @@ class LLMFile(BaseModel):
     #     """
     #     table = dynamodb.Table(LLM_FILE_TABLE)
     #     table.put_item(Item=self.to_dict())
-
-
-# Example usage
-# if __name__ == '__main__':
-#     # Example user
-#     user = User(user_id='123', name='John Doe', username='johndoe', email='john.doe@example.com')
-#     user.put()  # Insert into USER_TABLE
-#     print("User retrieved:", User.get('123'))
-#     print("User JSON:", user.to_json())
-
-#     # Example user files
-#     user_files = UserFiles(user_id='123', file_ids=['file1', 'file2'])
-#     user_files.put()  # Insert into USER_FILES_TABLE
-#     print("User files retrieved:", UserFiles.get('123'))
-#     print("UserFiles JSON:", user_files.to_json())
-
-#     # Example LLM file
-#     llm_file = LLMFile(file_id='file1', file_name='sample.txt', metadata={'size': '10KB'})
-#     llm_file.put()  # Insert into LLM_FILE_TABLE
-#     print("LLM file retrieved:", LLMFile.get('file1'))
-#     print("LLMFile JSON:", llm_file.to_json())
