@@ -19,18 +19,18 @@ from app.Api.exceptions import *
 from dotenv import load_dotenv
 load_dotenv()
 
-# constants
-PANDAS_AGENT_PROMPT = "Give me the pandas code to get answer to the query: {query}"
-SQL_AGENT_PROMPT = "Give me the SQL code to get answer to the following query. Do not select specific columns unless I ask you to do so. If I do not specify the number of rows, then assume that I want all such rows i.e. DO NOT USE LIMIT UNLESS I SPECIFY A NUMBER: {query}"
-
-FULL_PYTHON_STARTER_CODE = """
-import pandas as pd
-
-df = pd.read_csv("filename.csv")
-"""
+# LLM config variables
+from app.Api.llm_agent_config import *
 
 # pandas agent related functions
 def query_pandas_agent(df, query):
+    """
+    Processes a string query on a pandas DataFrame using a language model agent.
+
+    Validates the input DataFrame and query, invokes the agent to process the query, 
+    and returns the result. The function raises exceptions for invalid input types 
+    and an invalid query format.
+    """
     if not isinstance(df, pd.core.frame.DataFrame):
         raise Exception("Invalid input. Please provide a pandas DataFrame")
     if not isinstance(query, str):
@@ -41,7 +41,7 @@ def query_pandas_agent(df, query):
     if not valid_query:
         raise InvalidInputQueryException()
     
-    agent = create_pandas_dataframe_agent(OpenAI(temperature=0), df, verbose=False,  allow_dangerous_code= True,
+    agent = create_pandas_dataframe_agent(OpenAI(model=PANDAS_LLM_MODEL, temperature=0), df, verbose=False,  allow_dangerous_code= True,
                                      return_intermediate_steps=True)
     prompt = PANDAS_AGENT_PROMPT.format(query=query)
     print(prompt)
@@ -50,6 +50,13 @@ def query_pandas_agent(df, query):
     return res
 
 def process_pandas_result_to_json(res):
+    """
+    Converts the result of a pandas query into a JSON format.
+
+    Extracts and formats the query result from the agent's response, determining 
+    whether the result is a DataFrame or another type, and returns the result 
+    as a JSON object with relevant metadata.
+    """
     code = FULL_PYTHON_STARTER_CODE.strip() + '\n'+f"print({res['intermediate_steps'][0][0].dict()['tool_input']})"
     data = {
         "query": code
@@ -71,6 +78,13 @@ def csv_to_sqlite(df, db_file, table_name):
     conn.close()
 
 def query_sql_agent(df, query):
+    """
+    Executes an SQL query on a pandas DataFrame and returns the result in JSON format.
+
+    Validates the input DataFrame and query, converts the DataFrame to an SQLite 
+    database, runs the query using a language model, and formats the result as 
+    a JSON object. The result includes whether the output is a table or a single value.
+    """
     if not isinstance(df, pd.core.frame.DataFrame):
         raise Exception("Invalid input. Please provide a pandas DataFrame")
     if not isinstance(query, str):
@@ -89,7 +103,7 @@ def query_sql_agent(df, query):
     temp_db = SQLDatabase(engine)
 
     # run the query via langchain
-    chain = create_sql_query_chain(ChatOpenAI(model="gpt-4o-mini"), temp_db)
+    chain = create_sql_query_chain(ChatOpenAI(model=SQL_LLM_MODEL), temp_db)
     prompt = SQL_AGENT_PROMPT.format(query=query)
     print(prompt)
     sql_res = chain.invoke({"question": prompt}).split('SQLQuery: ')[1]
