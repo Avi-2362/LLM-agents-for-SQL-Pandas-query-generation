@@ -1,10 +1,7 @@
 # LLM-Powered Query Processing for CSVs
 
-This is a web-based tool to translate natural language inputs into SQL/Pandas queries for data analysis. Our tool aims to simplify complex data operations for non-technical users and to streamline workflows for data analysts.
-
----
-
 ## Contents
+- [Introduction](#introduction)
 - [High Level Features](#high-level-features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
@@ -18,6 +15,12 @@ This is a web-based tool to translate natural language inputs into SQL/Pandas qu
 - [AI Models](#ai-models)
 
 ---
+
+## Introduction
+
+This project leverages advanced Large Language Models (LLMs) to simplify querying and processing data from CSV files. It allows users to input natural language queries, converting them into precise SQL or Pandas commands. Designed for non-technical users and data analysts, the tool streamlines data operations and enhances accessibility. With support for text and voice inputs, it enables seamless interaction with uploaded datasets. The system generates accurate results, downloadable in CSV format, making data analysis intuitive and efficient.
+
+
 
 ## High Level Features  
 - **User Authentication**: Users can register and login to the application
