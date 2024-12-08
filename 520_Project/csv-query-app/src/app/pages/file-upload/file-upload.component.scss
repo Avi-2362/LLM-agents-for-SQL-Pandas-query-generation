@@ -25,7 +25,7 @@
 /* Main Content */
 .container {
   display: flex;
-  height: calc(100vh - 50px); /* Full height minus navbar */
+  height: 90%; /* Full height minus navbar */
   width: 100%; /* Full width of the viewport */
 }
 
@@ -270,9 +270,7 @@ pre {
 }
 
 .copy-button {
-  position: absolute; /* Position the button inside the container */
-  top: 17%; /* Adjust distance from the top */
-  right: 2.6%; /* Adjust distance from the right */
+  position: relative; /* Position the button inside the container */
   padding: 5px 10px; /* Button padding */
   background-color:  #00b8cd; /* Button background */
   color: white; /* Button text color */
@@ -281,6 +279,8 @@ pre {
   cursor: pointer; /* Pointer cursor on hover */
   font-size: 14px; /* Adjust font size */
   z-index: 10; /* Ensure the button appears above other content */
+  float: right;
+  
 }
 
 

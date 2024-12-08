@@ -49,12 +49,12 @@
       <h3>Query Options</h3>
       <div class="query-options">
         <label>
-          <input type="radio" name="queryType" value="SQL" [(ngModel)]="queryType" (ngModelChange)="onQueryTypeChange($event)" />
-          SQL
-        </label>
-        <label>
           <input type="radio" name="queryType" value="Pandas" [(ngModel)]="queryType" (ngModelChange)="onQueryTypeChange($event)" />
           Pandas
+        </label>
+        <label>
+          <input type="radio" name="queryType" value="SQL" [(ngModel)]="queryType" (ngModelChange)="onQueryTypeChange($event)" />
+          SQL
         </label>
       </div>
     </div>
@@ -65,12 +65,14 @@
         <p>{{ queryResult }}</p>
       </div> -->
       <div class="code-container">
+        <div>
+          <button (click)="copyCode()" class="copy-button"><i class="fa fa-copy"></i></button>
+         </div>
         <pre *ngIf="queryType=='Pandas'" ><code [innerHTML]="highlightedCode" class="language-python"></code></pre>
         <pre *ngIf="queryType=='SQL'" ><code [innerHTML]="highlightedCode" class="language-sql"></code></pre>
-        
-        <button (click)="copyCode()" class="copy-button"><i class="fa fa-copy"></i></button>
+
       </div>
-       
+
       <div class="results-header">
         <h4>Results</h4>
         <button (click)="downloadCsv()" class="download-btn">

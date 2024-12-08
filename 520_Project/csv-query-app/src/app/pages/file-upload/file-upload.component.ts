@@ -341,7 +341,7 @@ export class FileUploadComponent implements OnInit {
   }
 
 
-  queryType: string = 'SQL'; // Default to 'Pandas'
+  queryType: string = 'Pandas'; // Default to 'Pandas'
 
   startVoiceInput(): void {
     if (!this.speechRecognitionService.isListening) {
