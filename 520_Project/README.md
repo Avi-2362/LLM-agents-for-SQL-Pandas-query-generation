@@ -1,40 +1,30 @@
-# LLM Agent for Database Query Generation
+# LLM-Powered Query Processing for CSVs
 
 This is a web-based tool to translate natural language inputs into SQL/Pandas queries for data analysis. Our tool aims to simplify complex data operations for non-technical users and to streamline workflows for data analysts.
 
 ---
 
-## Features  
-- **Natural Language Interface**: Accepts queries in everyday language.  
-- **Query Generation**: Converts user inputs into SQL or Pandas queries using LLMs.  
-- **Data Processing**: Supports Excel/CSV uploads and query-based operations on the uploaded files.  
-- **Results Visualization**: Displays processed data and generates visualizations like line charts and pie charts.  
-- **Cloud Deployment**: Scalable architecture using AWS/GCP.  
-- **User Spaces**: Allows saving preferences and securely storing files.  
-- **Export Options**: Enables downloading processed data or visualization charts in formats like `.xlsx` or `.csv`.  
+## Contents
+- [High Level Features](#high-level-features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+  - [Frontend Setup](#frontend-setup)
+  - [Backend Setup](#backend-setup)
+  - [Environment Variables](#environment-variables)
+- [Running](#running)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+- [Unit Testing](#unit-testing)
+- [AI Models](#ai-models)
 
-<!-- ---
+---
 
-## Use Cases  
-### 1. Upload Data  
-- Upload Excel/CSV files via the web interface.  
-- Validates the file format and processes it accordingly.  
-
-### 2. Enter Natural Language Query  
-- Users provide queries in natural language (e.g., "Show the top 5 sales regions").  
-- LLM interprets the query and translates it into SQL/Pandas commands.  
-
-### 3. Generate and Execute Query  
-- Prompts LLM with user input and sample data to generate queries.  
-- Automatically checks query safety before execution.  
-
-### 4. Visualize Results  
-- Users can view the LLM-generated query and processed results.  
-- Create charts by selecting columns and visualization types.  
-
-### 5. Export Results  
-- Export processed data as XLSX, CSV, or other formats.  
-- Download visualization charts.   -->
+## High Level Features  
+- **User Authentication**: Users can register and login to the application
+- **Natural Language Interface**: Accepts queries natural language queries in englist, through text and voice based inputs.  
+- **User Spaces**: User can view all his uploaded csv files, upload new file, delete existing files.
+- **Query Generation**: Converts user inputs into SQL or Pandas queries on the given csv file using LLMs.
+- **Data Processing**: Returns downloadable results in `.csv` format.
 
 ---
 
