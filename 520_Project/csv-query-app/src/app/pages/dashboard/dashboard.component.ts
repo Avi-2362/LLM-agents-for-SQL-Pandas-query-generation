@@ -127,6 +127,7 @@ export class DashboardComponent implements OnInit {
       const response: any = await this.service.getPresignedUploadUrl(file.name).toPromise();
       const presignedUrl = response?.url;
       const file_id = response?.file_id;
+      console.log(response);
       console.log(presignedUrl);
       console.log(file_id);
       if (presignedUrl) {
@@ -142,10 +143,14 @@ export class DashboardComponent implements OnInit {
         this.service.updateData("files"); // can be any string
         // notification for successful file upload!!
         this.notification.showSuccessNotification(this.FILE_UPLOAD_SUCCESS_MESSAGE);
+      } else {
+        const error_msg = response?.error ? response?.error : this.FILE_UPLOAD_ERROR_MESSAGE;
+        this.notification.showErrorNotification(error_msg);
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error uploading file', error);
-      this.notification.showErrorNotification(this.FILE_UPLOAD_ERROR_MESSAGE);
+      const error_msg = error?.error.error ? `${error?.error.error}`: this.FILE_UPLOAD_ERROR_MESSAGE;
+      this.notification.showErrorNotification(error_msg);
     }
   }
 

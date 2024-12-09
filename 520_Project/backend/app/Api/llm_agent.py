@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import pandas as pd
+import json
 
 # Langchain imports
 from langchain_openai import OpenAI
@@ -65,12 +66,11 @@ def process_pandas_result_to_json(res):
         "query": code
     }
     logger.info(res)
+    data["is_table"] = True
     if(isinstance(res['intermediate_steps'][0][-1],pd.core.frame.DataFrame)):
-        data["is_table"] = True
         data["result"] = res['intermediate_steps'][0][-1].to_json()
     else:
-        data["is_table"] = False
-        data["result"] = res['intermediate_steps'][0][-1]
+        data["result"] = pd.DataFrame([{"Output": res['intermediate_steps'][0][-1]}]).to_json()
     return data
 
 ## SQL agent related functions
@@ -120,11 +120,12 @@ def query_sql_agent(df, query):
         columns = result.keys()                # Get the column names
 
     json_output = {}    
+    json_output['is_table'] = True
     if len(rows) == 1 and len(columns) == 1:
-        json_output['is_table'] = False
-        table_json = rows[0][0]
+        table_json = pd.DataFrame([{"Output": str(rows[0][0])}]).to_json()
+        print(table_json)
     else:
-        json_output['is_table'] = True
+        
         table_json = [dict(zip(columns, row)) for row in rows]
         table_df = pd.DataFrame(table_json)
         table_json = table_df.to_json()

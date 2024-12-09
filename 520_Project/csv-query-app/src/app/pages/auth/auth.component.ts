@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import * as CryptoJS from 'crypto-js';
 import { BackendService } from '../../services/backend.service';
 import { NotificationService } from '../../services/notification.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Component({
@@ -94,9 +94,10 @@ export class AuthComponent {
       console.log("login now!!");
       this.toggleFlip();
       this.notification.showSuccessNotification(this.USER_REGISTERATION_SUCCESS_MESSAGE);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error logging in', error);
-      this.notification.showErrorNotification(this.USER_REGISTERATION_ERROR_MESSAGE);
+      const error_msg = error?.error.error ? `${error?.error.error}`: this.USER_REGISTERATION_ERROR_MESSAGE;
+      this.notification.showErrorNotification(error_msg);
     }
   }
   // Hash the password and send it for login
@@ -112,10 +113,10 @@ export class AuthComponent {
       const response = await this.service.login(email, hashedPassword).toPromise();
       this.route.navigate(['dashboard']); // Navigate on successful login
       this.notification.showSuccessNotification(this.USER_LOGIN_SUCCESS_MESSAGE);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error logging in', error);
-      this.notification.showErrorNotification(this.INVALID_CREDENTIALS_MESSAGE);
-
+      const error_msg = error?.error.error ? `${error?.error.error}`: this.INVALID_CREDENTIALS_MESSAGE;
+      this.notification.showErrorNotification(error_msg);
     }
   }
 
