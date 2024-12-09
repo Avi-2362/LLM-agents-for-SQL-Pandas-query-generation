@@ -36,7 +36,7 @@
         
         <!-- <button (click)="stopVoiceInput()">⛔</button> -->
          <div class="chat-buttons">
-          <button class="mic-button" (click)="startVoiceInput()">🎤</button>
+          <button class="mic-button" (click)="startVoiceInput()"><i class="fa fa-microphone"> </i></button>
           <button class="submit-button" 
             [disabled]="!query || query.trim() === ''"
             (click)="onSubmitQuery()">Submit</button>
