@@ -1,3 +1,4 @@
+import json
 import pytest
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -5,26 +6,19 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../app/
 from llm_agent import *
 import pandas as pd
 
-# tabular query: agent should return filtered rows where age is 21. verify the passenger ids using ground truth data
-def test_query_pandas_agent1():
+# test the LLM agent for pandas query generation using queries and answers from the questions.json file
+def test_query_pandas_agent():
     df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-    query = "filter rows where age is 21"
-    try:
+    with open('questions.json', 'r') as f:
+        queries = json.load(f)
+    for query, gt in queries.items():
         pandas_data = query_pandas_agent(df, query)
-        passengers = pandas_data['intermediate_steps'][0][1]['PassengerId']
-        gt = open('passengers.txt', 'r+')
-        gt = gt.read().split(',')
-        gt = [int(i) for i in gt]
-        assert set(passengers) == set(gt)
-    except Exception as e:
-        assert False, f"Error: {e}"
-
-# numerical query: agent should return correct number for the query "how many people with age = 21?"
-def test_query_pandas_agent2():
-    df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-    query = "how many people with age = 21?"
-    pandas_data = query_pandas_agent(df, query)
-    assert int(pandas_data['output']) == 24
+        if type(gt) == list:
+            ans = pandas_data['intermediate_steps'][0][1]['PassengerId']
+            assert set(gt) == set(ans)
+        else:
+            ans = pandas_data['output']
+            assert str(gt).lower() in ans.lower()
 
 # this should return an exception because the dataframe is not a pandas dataframe
 def test_query_pandas_agent_fail1():

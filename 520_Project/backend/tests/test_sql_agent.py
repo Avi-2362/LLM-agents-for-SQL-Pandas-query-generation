@@ -20,26 +20,19 @@ def test_csv_to_sqlite():
     conn.close()
     os.remove(db_file)
 
-# tabular query: agent should return filtered rows where age is 21. verify the passenger ids using ground truth data
+# test the LLM agent for SQL query generation using queries and answers from the questions.json file
 def test_query_sql_agent1():
     df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-    query = "filter rows where age is 21"
-    try:
+    with open('questions.json', 'r') as f:
+        queries = json.load(f)
+    for query, gt in queries.items():
         sql_data = query_sql_agent(df, query)
-        passengers = json.loads(sql_data['result'])['PassengerId'].values()
-        gt = open('passengers.txt', 'r+')
-        gt = gt.read().split(',')
-        gt = [int(i) for i in gt]
-        assert set(passengers) == set(gt)
-    except Exception as e:
-        assert False, f"Error: {e}"
-
-# numerical query: agent should return correct number for the query "how many people with age = 21?"
-def test_query_sql_agent2():
-    df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
-    query = "how many people with age = 21?"
-    sql_data = query_sql_agent(df, query)
-    assert int(sql_data['result']) == 24
+        if type(gt) == list:
+            ans = json.loads(sql_data['result'])['PassengerId'].values()
+            assert set(gt) == set(ans)
+        else:
+            ans = json.loads(sql_data['result'])['Output']['0']
+            assert str(gt).lower() in ans.lower()
 
 # this should return an exception because the dataframe is not a pandas dataframe
 def test_query_sql_agent_fail1():
