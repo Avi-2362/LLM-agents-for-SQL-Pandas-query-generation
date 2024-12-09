@@ -80,10 +80,10 @@ export class FileUploadComponent implements OnInit {
         this.service.dataPython$.subscribe((updatedData) => {
           console.log(updatedData);
           if (this.queryType=="Pandas"){
-            this.highlightedCode = Prism.highlight(this.pythonCode, Prism.languages['python'], 'python');
+            this.highlightedCode = Prism.highlight(this.pythonCode.trim().replace(/^\s*\n|\n\s*$/g, ''), Prism.languages['python'], 'python');
           }
           else {
-            this.highlightedCode = Prism.highlight(this.sqlQuery, Prism.languages['sql'], 'sql');
+            this.highlightedCode = Prism.highlight(this.sqlQuery.trim(), Prism.languages['sql'], 'sql');
           }
           
         })

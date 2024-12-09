@@ -115,6 +115,12 @@ textarea {
   background-color: #74dfeb;
 }
 
+.submit-button:disabled {
+  background-color:  #00b8cd;
+  cursor: not-allowed;
+  opacity: 0.6; /* Fade effect */
+}
+
 /* Updated Query Options */
 .query-options-container {
   display: flex; /* Align heading and radio buttons in a row */
@@ -252,15 +258,17 @@ h2 {
   border-radius: 5px; /* Optional: Rounded corners */
   background-color: #f9f9f9; /* Optional: Background color */
   box-sizing: border-box; /* Ensures padding/border don't increase size */
-  padding: 10px;
+  padding: 5px;
   
 }
 
 pre {
-  width: 100%; /* Or a fixed width if required */
-  height: 150px; /* Set a fixed height */
+  // width: 100%; /* Or a fixed width if required */
+  // height: 150px; /* Set a fixed height */
   background-color: #f9f9f9;
   font-family: 'Courier New', Courier, monospace;
+  padding: 0 !important;
+  margin: 8 0 !important;
 
 }
 .copy-container {

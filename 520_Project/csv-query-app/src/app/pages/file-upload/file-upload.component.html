@@ -37,7 +37,9 @@
         <!-- <button (click)="stopVoiceInput()">⛔</button> -->
          <div class="chat-buttons">
           <button class="mic-button" (click)="startVoiceInput()">🎤</button>
-          <button class="submit-button" (click)="onSubmitQuery()">Submit</button>
+          <button class="submit-button" 
+            [disabled]="!query || query.trim() === ''"
+            (click)="onSubmitQuery()">Submit</button>
          </div>
         
       </div>
@@ -68,14 +70,16 @@
         <div>
           <button (click)="copyCode()" class="copy-button"><i class="fa fa-copy"></i></button>
          </div>
-        <pre *ngIf="queryType=='Pandas'" ><code [innerHTML]="highlightedCode" class="language-python"></code></pre>
-        <pre *ngIf="queryType=='SQL'" ><code [innerHTML]="highlightedCode" class="language-sql"></code></pre>
-
+         <div>
+          <pre *ngIf="queryType=='Pandas'" ><code [innerHTML]="highlightedCode" class="language-python"></code></pre>
+          <pre *ngIf="queryType=='SQL'" ><code [innerHTML]="highlightedCode" class="language-sql"></code></pre>  
+         </div>
+        
       </div>
 
       <div class="results-header">
         <h4>Results</h4>
-        <button (click)="downloadCsv()" class="download-btn">
+        <button *ngIf="!isLoading && isResultTable" (click)="downloadCsv()" class="download-btn">
           <i class="fa fa-download"></i>
         </button>
       </div>
