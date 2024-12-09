@@ -20,8 +20,10 @@ from app.Api.llm_agent import process_pandas_result_to_json, query_pandas_agent,
 from app.Api.models import *
 from app.Api.exceptions import *
 from app.Api.enums import *
+from app.Api.errors import *
 # import logger
 from app.logger import logger
+
 
 allowed_hosts=["http://localhost:4200/*","http://localhost:4200"]
 
@@ -72,7 +74,8 @@ class UserResource(FlaskView):
             userFiles.put()
             return jsonify({'msg':'success'}), 200
         except Exception as ex:
-            return jsonify({'msg':'falied to delete', 'error': str(ex)}), 400
+            logger.error(ex)
+            return jsonify({'error': FILE_DELETE_ERROR_MESSAGE}), 400
 
 
     @route('upload/file', methods=['POST'])
@@ -148,13 +151,13 @@ class UserResource(FlaskView):
                 })
         except InvalidFileTypeException as e:
             logger.error(e)
-            return jsonify({"error": e.message})
+            return jsonify({"error": INVALID_FILE_UPLOAD_ERROR})
         except (NoCredentialsError, PartialCredentialsError) as e:
             logger.error(e)
-            return jsonify({'error': 'Credentials error'}), 500
+            return jsonify({'error': CREDENTIALS_ERROR}), 500
         except Exception as e:
             logger.error(e)
-            return jsonify({'error': 'Error generating upload URL'}), 500
+            return jsonify({'error': GENERATE_UPLOAD_URL_ERROR}), 500
 
     # @route('view/file-url', methods=['GET'])
     @route('generate-view-url', methods=['GET'])
@@ -179,10 +182,10 @@ class UserResource(FlaskView):
             return jsonify({'url': url})
         except (NoCredentialsError, PartialCredentialsError) as e:
             logger.error(e)
-            return jsonify({'error': 'Credentials error'}), 500
+            return jsonify({'error': CREDENTIALS_ERROR}), 500
         except Exception as e:
             logger.error(e)
-            return jsonify({'error': 'Error generating download URL'}), 500
+            return jsonify({'error': GENERATE_DOWNLOAD_URL_ERROR}), 500
 
     
 class AuthResource(FlaskView):
@@ -252,17 +255,17 @@ class AuthResource(FlaskView):
         except InvalidInputException as e:
             logger.error(f"error-1 : {e}")
             return jsonify({
-                "msg": str(e)
-            }),404
+                "error": str(e)
+            }),400
         except UserAlreadyExistsException as e:
             logger.error(f"error-2: {e}")
             return jsonify({
-                "msg": str(e)
-            }),404
+                "error": USER_ALREADY_EXISTS_ERROR
+            }),400
         except Exception as e:
             logger.error(f"error-3: {e.with_traceback()}")
             return jsonify({
-                "msg": f"{e}"
+                "error": f"{e}"
             }),404
         
     
@@ -291,10 +294,10 @@ class AuthResource(FlaskView):
                 return response, 200
             else:
                 logger.info("Wrong username or password!")
-                return jsonify({"msg": "Bad username or password"}), 401
+                return jsonify({"error": INVALID_CREDENTIALS_ERROR_MESSAGE}), 401
         except Exception as e:
             logger.error("error....",e)
-            return jsonify({"msg": "Bad username or password"}), 401
+            return jsonify({"error": INVALID_CREDENTIALS_ERROR_MESSAGE}), 401
     
     @route('auth_check', methods=['GET'])
     @jwt_required()
@@ -349,21 +352,29 @@ class ApiResource(FlaskView):
         user_query = data.get('query')
 
         if not file_key or not user_query:
-            return jsonify({'error': 'file_key and query are required'}), 400
+            return jsonify({'error': FILE_KEY_QUERY_MISSING_ERROR}), 400
 
         # Get the file from S3
         params = {
                 'Bucket': S3_BUCKET_NAME,
                 'Key': file_key
             }
-        url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
-        logger.info(f'url: {url}')
-        df = pd.read_csv(url)
-        res = query_pandas_agent(df,user_query)
-        llm_output = process_pandas_result_to_json(res)
+        try:
+            url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
+            logger.info(f'url: {url}')
+            df = pd.read_csv(url)
+            res = query_pandas_agent(df,user_query)
+            llm_output = process_pandas_result_to_json(res)
 
-        # Return the response back to the frontend
-        return jsonify(llm_output), 200
+            # Return the response back to the frontend
+            return jsonify(llm_output), 200
+        except InvalidInputQueryException as e:
+            logger.error(e)
+            return jsonify({"error": str(e)}),400
+        except Exception as e:
+            logger.error(e)
+            return jsonify({"msg": "error"}), 404
+
     
     @route('get-sql-query', methods=['POST'])
     @jwt_required()
@@ -386,17 +397,24 @@ class ApiResource(FlaskView):
         user_query = data.get('query')
 
         if not file_key or not user_query:
-            return jsonify({'error': 'file_key and query are required'}), 400
+            return jsonify({'error': FILE_KEY_QUERY_MISSING_ERROR}), 400
 
         # Get the file from S3
         params = {
                 'Bucket': S3_BUCKET_NAME,
                 'Key': file_key
             }
-        url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
-        logger.info(f'url: {url}')
-        df = pd.read_csv(url)
-        llm_output = query_sql_agent(df,user_query)
+        try:
+            url = s3_client.generate_presigned_url('get_object', Params=params, ExpiresIn=600)
+            logger.info(f'url: {url}')
+            df = pd.read_csv(url)
+            llm_output = query_sql_agent(df,user_query)
 
-        # Return the response back to the frontend
-        return jsonify(llm_output), 200
+            # Return the response back to the frontend
+            return jsonify(llm_output), 200
+        except InvalidInputQueryException as e:
+            logger.error(e)
+            return jsonify({"error": str(e)}),400
+        except Exception as e:
+            logger.error(e)
+            return jsonify({"msg": "error"}), 404

@@ -52,7 +52,7 @@ export class FileUploadComponent implements OnInit {
 
   // Push notifications Success display messages
   GENERATED_FAILED_MESSAGE = "Failed to generate results!!"
-  COPY_FAILED_MESSAGE = "Successfully copied to clipboard!!"
+  COPY_FAILED_MESSAGE = "Failed to copy to clipboard!!"
 
   constructor(
     private fb: FormBuilder,
@@ -165,77 +165,6 @@ export class FileUploadComponent implements OnInit {
     });
   }
 
-  // async onSubmitQuery() {
-  //   console.log("called onSubmitQuery");
-  //   if (this.query) {
-  //     console.log('Query submitted:', this.query);
-  //     try {
-  //       if (true) {
-  //         if (this.queryType=="Pandas"){
-  //           this.service.getPandasQueryOutput(this.file_id, this.query, 'default').subscribe({
-  //             next: (response: any) => {
-  //               console.log(response);
-  //               const result = JSON.parse(response['result']);
-  //               this.queryResult = response['query'];
-  //               this.pythonCode = this.queryResult;
-  //               this.service.updateDataPython("python");
-  //               this.headers = Object.keys(result);
-  //               this.isResultTable = response['is_table'];
-  
-  //               const rows = Object.keys(result[this.headers[0]]);
-  //               this.data = rows.map((rowId) => {
-  //                 let row: any = {};
-  //                 this.headers.forEach((header) => {
-  //                   row[header] = result[header][rowId];
-  //                 });
-  //                 return row;
-  //               });
-  //               this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
-  //             },
-  //             error: (error) => {
-  //               console.error('Error sending the query', error);
-  //               this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
-  //             },
-  //           });
-  //         } else {
-  //           this.service.getSqlQueryOutput(this.file_id, this.query, 'default').subscribe({
-  //             next: (response: any) => {
-  //               console.log(response);
-  //               const result = JSON.parse(response['result']);
-  //               this.queryResult = response['query'];
-  //               this.sqlQuery = this.queryResult;
-  //               this.service.updateDataPython("sql");
-  //               this.headers = Object.keys(result);
-  //               this.isResultTable = response['is_table'];
-  
-  //               const rows = Object.keys(result[this.headers[0]]);
-  //               this.data = rows.map((rowId) => {
-  //                 let row: any = {};
-  //                 this.headers.forEach((header) => {
-  //                   row[header] = result[header][rowId];
-  //                 });
-  //                 return row;
-  //               });
-  //               this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
-  //             },
-  //             error: (error) => {
-  //               console.error('Error sending the query', error);
-  //               this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
-  //             },
-  //           });
-  //         }
-          
-  //       } else {
-  //         console.log('No file found!!');
-  //       }
-  //     } catch (error) {
-  //       console.error('Unexpected error in query submission', error);
-  //       this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
-  //     }
-
-  //     // this.queryResult = `Results for query: ${this.query}`;
-  //   }
-  // }
 
   async onSubmitQuery() {
     console.log("called onSubmitQuery");
@@ -267,9 +196,10 @@ export class FileUploadComponent implements OnInit {
                 this.notification.showSuccessNotification(this.GENERATED_SUCCESS_MESSAGE);
                 this.isLoading = false; // Stop reloading animation
               },
-              error: (error) => {
+              error: (error: any) => {
                 console.error('Error sending the query', error);
-                this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+                const error_msg = error?.error.error ? `${error?.error.error}`: this.GENERATED_FAILED_MESSAGE;
+                this.notification.showErrorNotification(error_msg);
                 this.isLoading = false; // Stop reloading animation on error
               },
             });
@@ -297,7 +227,8 @@ export class FileUploadComponent implements OnInit {
               },
               error: (error) => {
                 console.error('Error sending the query', error);
-                this.notification.showErrorNotification(this.GENERATED_FAILED_MESSAGE);
+                const error_msg = error?.error.error ? `${error?.error.error}`: this.GENERATED_FAILED_MESSAGE;
+                this.notification.showErrorNotification(error_msg);
                 this.isLoading = false; // Stop reloading animation on error
               },
             });

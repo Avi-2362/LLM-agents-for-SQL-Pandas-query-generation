@@ -4,6 +4,7 @@ import json
 from typing import Type, TypeVar
 from app.Api.enums import *
 from app.Api.exceptions import *
+from app.Api.errors import *
 
 # Initialize DynamoDB resource
 dynamodb = boto3.resource('dynamodb')
@@ -118,7 +119,7 @@ class User(BaseModel):
     @staticmethod
     def validate_nd_make_user(data):
         if any([(key not in data) or (key is None) for key in User._required_keys()]):
-            raise InvalidInputException("username, name and email should not be null or empty")
+            raise InvalidInputException(INVALID_USER_REGISTRATION_ERROR)
         return User(user_id=data['username'],name=data['name'], username=data['username'], email=data['email'], hashed_password=data['hashed_password']), Status.VALID
 
 
