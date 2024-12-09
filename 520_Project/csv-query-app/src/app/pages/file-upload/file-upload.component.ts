@@ -110,7 +110,6 @@ export class FileUploadComponent implements OnInit {
       // Clear the chat input
       this.chatQuery = '';
     }
-
     this.query = this.chatQuery;
     await this.onSubmitQuery();
   }
@@ -336,6 +335,7 @@ export class FileUploadComponent implements OnInit {
   }
   
 
+  
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }
