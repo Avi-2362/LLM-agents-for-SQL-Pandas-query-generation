@@ -15,6 +15,7 @@ Akshay Kumar Sureddy:
 - AWS S3 setup
 - Authentication (Hashing, backend and JWT)
 - Dashboard page
+- Frontend Services (backend connectivity)
 
 Avinash reddy Vasipalli:
 
