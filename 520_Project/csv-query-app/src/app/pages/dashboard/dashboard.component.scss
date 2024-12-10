@@ -149,18 +149,20 @@
   margin-bottom: 10px; /* Add spacing between the text and arrow */
 }
 
-.arrow {
-  position: relative; /* Ensure the arrow stays fixed relative to its parent */
-  margin: 0 auto; /* Center the arrow horizontally */
-  width: 0;
-  height: 0;
-  top: 400px; /* Move the guide container to the vertical center */
-  left: 785px; /* Move the guide container to the horizontal center */
-  border-left: 15px solid transparent; /* Create the left side of the arrow */
-  border-right: 15px solid transparent; /* Create the right side of the arrow */
-  border-top: 20px solid #00b8cd; /* Downward pointing arrow */
-  animation: bounce 1s infinite; /* Add bounce animation */
-}
+// .arrow {
+//   position: relative; /* Keeps the arrow fixed relative to the viewport */
+//   bottom: 20px;    /* Distance from the bottom edge */
+//   right: 20px;     /* Distance from the right edge */
+//   width: 0;
+//   height: 0;
+//   float: right;
+//   margin-left: auto;
+//   border-left: 15px solid transparent; /* Create the left side of the arrow */
+//   border-right: 15px solid transparent; /* Create the right side of the arrow */
+//   border-top: 20px solid #00b8cd; /* Downward pointing arrow */
+//   animation: bounce 1s infinite;  /* Add bounce animation */
+// }
+
 
 
 

@@ -171,7 +171,7 @@ export class DashboardComponent implements OnInit {
     }
   }
   get showUploadGuide(): boolean {
-    return !this.isFileUploaded && this.files.length === 0;
+    return this.files.length === 0;
   }
   
 }
