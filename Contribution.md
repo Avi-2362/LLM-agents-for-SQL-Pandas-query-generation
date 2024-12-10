@@ -24,5 +24,10 @@ Avinash reddy Vasipalli:
 - CSV Rendering and Parsing Feature
 
 Muhammad Yusuf Hassan:
+- Wrote backend code for running and calling LLM Agents
+- Wrote all unit testing code
+- Bug fixing
+- Wrote the documentation
+- Report and PPT writing
 
 Dhanus Kanth Anand:
