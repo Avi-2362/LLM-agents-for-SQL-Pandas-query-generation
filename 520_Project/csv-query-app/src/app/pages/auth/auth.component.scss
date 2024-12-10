@@ -28,23 +28,12 @@
   text-align: center; /* Center the text within the parent */
 }
 
-// .auth-container {
-//   display: flex;
-//   justify-content: center; /* Center the entire layout */
-//   align-items: center; /* Vertically center the layout */
-//   height: 100vh;
-//   width: 100vw;
-//   position: relative; /* Ensure it layers properly */
-//   border: none;
-// }
 .auth-container {
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   position: relative; /* Absolute positioning for centering */
   top: 25%; /* Move to the middle of the page */
-  // left: 50%; /* Move to the center of the page */
-  // transform: translate(-50%, -50%); /* Adjust position to ensure centering */
   width: 100%; /* Occupy full width of the viewport */
   height: 100%; /* Occupy full height of the viewport */
   z-index: 1; /* Ensure it appears above background elements */
