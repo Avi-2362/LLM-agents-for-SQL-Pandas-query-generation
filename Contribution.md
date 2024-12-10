@@ -8,8 +8,6 @@ Abhishek Sureddy:
 - Main page of Frontend Application (File-upload component)
 
 Akshay Kumar Sureddy:
-
-Akshay Kumar Sureddy: 
 - First version of app (frontend and backend skeleton)
 - AWS DynamoDB setup
 - AWS S3 setup
@@ -18,6 +16,12 @@ Akshay Kumar Sureddy:
 - Frontend Services (backend connectivity)
 
 Avinash reddy Vasipalli:
+- Auth page Developed and Revamping and Restructuring
+- Dashboard Revamp and Restructuring
+- File Upload Page Devloped and Revamp and Restructuring
+- Major Frontend changes and Designing
+- Bug fix on Major Componets
+- Report and PPT making contribution
 
 Muhammad Yusuf Hassan:
 
