@@ -221,7 +221,7 @@ Since we are using LLMs via the OpenAI API, the key needs to be set in the envir
 Open a terminal and run the following:
 ```bash
     cd csv-query-app  
-    ng serve
+    ng serve --configuration production
 ```
 
 ### Backend
