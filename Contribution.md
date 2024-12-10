@@ -21,7 +21,7 @@ Avinash reddy Vasipalli:
 - File Upload Page Devloped and Revamp and Restructuring
 - Major Frontend changes and Designing
 - Bug fix on Major Componets
-- Report and PPT making contribution
+- CSV Rendering and Parsing Feature
 
 Muhammad Yusuf Hassan:
 
