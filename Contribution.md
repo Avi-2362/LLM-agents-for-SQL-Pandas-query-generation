@@ -31,3 +31,8 @@ Muhammad Yusuf Hassan:
 - Report and PPT writing
 
 Dhanus Kanth Anand:
+- Explored Auth options for the login page
+- Fixed bugs and ensured compatibility across components
+- Worked on user feedback mechanisms for error handling
+- Collaborated for the report writing
+- Collaborated for the presentation slides
