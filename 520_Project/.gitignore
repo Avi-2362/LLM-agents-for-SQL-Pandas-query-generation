@@ -6,3 +6,4 @@ backend/app/.env
 *.DS_Store*
 *AWSCLIV2.pkg*
 *.log
+*.db
